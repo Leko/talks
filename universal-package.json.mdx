@@ -1,0 +1,271 @@
+export { future as theme } from 'mdx-deck/themes'
+import { CodeSurfer } from "mdx-deck-code-surfer"
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus"
+import deindent from "deindent"
+
+# Universal package.json
+
+roppongi.js #6
+Leko
+
+---
+
+## Leko
+
+<img src="./assets/self_avatar.png" height="250" />
+<img src="./assets/self_bio.png" height="250" />
+<img src="./assets/self_contributions.png" height="250" />
+
+Node.js, React, React Native, React Native for web
+
+---
+
+## TL;DR
+
+package.jsonに`react-native`というフィールドでReact Native(metro)でのみ反応するエントリポイントを定義できるが、使い所難しいどころかむしろ使うべきではないと思っている
+
+---
+
+## styled-components
+
+<img src="./assets/universal-package.json/expo-support-universal-endpoint.png" width="100%" />
+
+https://www.styled-components.com/docs/basics#react-native
+
+---
+
+<CodeSurfer
+  title="with React Native"
+  code={require('!raw-loader!./assets/universal-package.json/example-of-styled-components.js')}
+  lang="javascript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    { lines: [2], notes: "Require from anywhare...?" }
+  ]}
+/>
+
+---
+
+<CodeSurfer
+  title="package.json"
+  notes="https://github.com/styled-components/styled-components/blob/v3.4.6/package.json"
+  code={deindent`
+    {
+      "name": "styled-components",
+      "version": "3.4.6",
+      "description": "...",
+      "typings": "...",
+      "main": "...",
+      "jsnext:main": "dist/styled-components.esm.js",
+      "module": "dist/styled-components.esm.js",
+      "react-native": "dist/styled-components.native.cjs.js",
+      "browser": {
+        "...": "...",
+      },
+      ...
+    }
+  `}
+  lang="javascript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    { tokens: { 10: [1], 11: [1] }, notes: "What are `react-native` and `browser`?" },
+  ]}
+/>
+
+---
+
+## browser
+
+If your module is meant to be used client-side the browser field should be used instead of the main field.
+
+[package.json | npm Documentation](https://docs.npmjs.com/files/package.json#browser)
+
+---
+
+<CodeSurfer
+  title="src/ModuleGraph/node-haste/Package.js"
+  notes="https://github.com/facebook/metro/packages/metro"
+  code={require('!raw-loader!./assets/universal-package.json/getReplacements.js')}
+  lang="javascript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    { range: [2, 3], notes: "metro can treat `react-native` and `browser` field in package.json" },
+    { range: [13, 19], notes: "They allowed string or object" },
+    { range: [21, 23], notes: "react-native is given priority over browser" },
+  ]}
+/>
+
+---
+
+<CodeSurfer
+  title="package.json"
+  notes="https://github.com/styled-components/styled-components/blob/v3.4.6/package.json"
+  code={deindent`
+    {
+      "name": "styled-components",
+      "version": "3.4.6",
+      "description": "...",
+      "typings": "...",
+      "main": "dist/styled-components.cjs.js",
+      "jsnext:main": "dist/styled-components.esm.js",
+      "module": "dist/styled-components.esm.js",
+      "react-native": "dist/styled-components.native.cjs.js",
+      "browser": {
+        ...
+        "./dist/styled-components.cjs.js": "./dist/styled-components.browser.cjs.js",
+        ...
+      },
+      ...
+    }
+  `}
+  lang="javascript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    { tokens: { 7: [4], 13: [1] }, notes: "What are `react-native` and `browser`?" },
+  ]}
+/>
+
+---
+
+<CodeSurfer
+  title="in webpack"
+  code={deindent`
+    {
+      ...
+      "main": "./dist/styled-components.browser.cjs.js",
+      ...
+    }
+  `}
+  lang="javascript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+/>
+
+---
+
+<CodeSurfer
+  title="in React Native (metro)"
+  code={deindent`
+    {
+      ...
+      "main": "dist/styled-components.native.cjs.js",
+      ...
+    }
+  `}
+  lang="javascript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+/>
+
+---
+
+## react-native field `with react-native-web`
+
+---
+
+## react-native-web
+
+"React Native for Web" makes it possible to run React Native components and APIs on the web using React DOM
+
+https://github.com/necolas/react-native-web
+
+---
+
+<CodeSurfer
+  title="How react-native-web works"
+  code={deindent`
+    // webpack.config.js
+    module.exports = {
+      // ...
+      resolve: {
+        alias: {
+          'react-native$': 'react-native-web'
+        }
+      }
+    }
+  `}
+  lang="javascript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    { tokens: { 7: [1, 4] }, notes: "RNと同一I/FでimportできるUIコンポーネント集。webpackでbundle" },
+  ]}
+/>
+
+---
+
+## context
+
+- RNでもRN-webでもで動くコンポーネント作りたい
+- styled-componentsでthemingしたい
+- /nativeと書くのはdeprecatedなので/native外す
+
+---
+
+<CodeSurfer
+  title="in React Native for web"
+  code={require('!raw-loader!./assets/universal-package.json/example-of-styled-components.js')}
+  lang="javascript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    { tokens: { 4: [4,5,6], 8: [4,5,6] } },
+  ]}
+/>
+
+---
+
+<img src="./assets/universal-package.json/error.png" width="100%" />
+
+---
+
+```
+> const styled = require('styled-components').default
+>
+> styled.View
+undefined
+> styled.Text
+undefined
+>
+> styled.span
+{ [Function: templateFunction] ... }
+> styled.div
+{ [Function: templateFunction] ... }
+```
+
+---
+
+||View, Text|div, span|
+|---|---|---|
+|RN + (no suffix)|:ok_woman:|:no_good:|
+|RN + /native|:ok_woman:|:no_good:|
+|RN-web + (no suffix)|:sob:|:no_good:|
+|RN-web + /native|:ok_woman:|:no_good:|
+
+---
+
+<blockquote class="twitter-tweet" data-lang="ja"><p lang="en" dir="ltr">.<a href="https://twitter.com/nodejs?ref_src=twsrc%5Etfw">@nodejs</a> is not a Browser. It supports the same language (JS) but it’s execution model is very different. Don’t treat it like one.</p>&mdash; Matteo Collina (@matteocollina) <a href="https://twitter.com/matteocollina/status/1034862144142155776?ref_src=twsrc%5Etfw">2018/08/29</a></blockquote>
+
+---
+
+## conclusion
+
+- `browser`, `react-native`はmetroにおいてmainより優先される
+- でもRN⇄browserはNode.js⇄browserかそれ以上に難しい
+- platform非依存ならreact-native fieldいらないジレンマ。活用例を知りたい
+
+---
+
+# END
