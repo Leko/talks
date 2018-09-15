@@ -4,9 +4,7 @@
   "description": "My talks",
   "main": "index.js",
   "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "ls src/*.mdx | xargs -I'{}' basename {} .mdx | xargs -I'{}' -n1 $(npm bin)/mdx-deck build {}.mdx --no-html --out-dir ./dist/{}",
-    "postbuild": "cp -R ./src/assets ./dist/assets",
+    "build": "./scripts/build-decks",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "mdx-deck"
   },
