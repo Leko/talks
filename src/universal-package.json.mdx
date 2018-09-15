@@ -1,7 +1,12 @@
-export { future as theme } from 'mdx-deck/themes'
+import { Head } from "mdx-deck"
 import { CodeSurfer } from "mdx-deck-code-surfer"
 import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus"
 import deindent from "deindent"
+export { default as theme } from './theme'
+
+<Head>
+  <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+</Head>
 
 # Universal package.json
 
