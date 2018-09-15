@@ -4,6 +4,8 @@
   "description": "My talks",
   "main": "index.js",
   "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "ls *.mdx | xargs -I'{}' basename {} .mdx | xargs -I'{}' -n1 $(npm bin)/mdx-deck build {}.mdx --no-html --out-dir ./dist/{}",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "mdx-deck"
   },
@@ -21,6 +23,7 @@
     "deindent": "^0.1.0",
     "mdx-deck": "^1.7.3",
     "mdx-deck-code-surfer": "^0.4.1",
-    "raw-loader": "^0.5.1"
+    "raw-loader": "^0.5.1",
+    "rimraf": "^2.6.2"
   }
 }
