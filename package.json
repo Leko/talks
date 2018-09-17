@@ -20,7 +20,7 @@
   "homepage": "https://github.com/Leko/slides#readme",
   "devDependencies": {
     "deindent": "^0.1.0",
-    "mdx-deck": "^1.7.3",
+    "mdx-deck": "^1.7.4",
     "mdx-deck-code-surfer": "^0.4.1",
     "raw-loader": "^0.5.1",
     "rimraf": "^2.6.2"

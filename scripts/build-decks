@@ -7,5 +7,6 @@ MDXs=$(ls src/*.mdx | xargs -I'{}' basename {} .mdx)
 
 echo $MDXs | xargs -I'{}' -n1 $(npm bin)/mdx-deck build src/{}.mdx --no-html --out-dir ./dist/{}
 echo $MDXs | xargs -I'{}' -n1 $(npm bin)/mdx-deck pdf src/{}.mdx --out-file {}.pdf
+echo $MDXs | xargs -I'{}' -n1 $(npm bin)/mdx-deck screenshot src/{}.mdx --out-file {}.png
 
 cp -R ./src/assets ./dist/assets
