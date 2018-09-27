@@ -1,0 +1,311 @@
+import { Head } from "mdx-deck"
+import { Split } from 'mdx-deck/layouts'
+import { CodeSurfer } from "mdx-deck-code-surfer"
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus"
+import deindent from "deindent"
+import { Meta } from './Meta'
+export { default as theme } from './theme'
+
+<Head>
+  <Meta
+    title='Universal package.json'
+    slug='universal-package.json'
+    publishedAt={new Date(2018, 8, 18)}
+  />
+  <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+</Head>
+
+# スマフォでコードリーディングするExpoアプリを作ってる話
+
+[web界隈LT会](https://air-closet.connpass.com/event/89206/)
+Leko
+
+---
+
+## Leko
+
+<img src="/assets/self_avatar.png" height="250" />
+<img src="/assets/self_bio.png" height="250" />
+<img src="/assets/self_contributions.png" height="250" />
+
+Node.js, React, React Native, React Native for web
+
+---
+
+## iOS Safari with GitHub
+
+<img src="/assets/expo-app-for-code-reading/safari-github-01.png" width="24%" style={{ marginLeft: '1%' }} />
+<img src="/assets/expo-app-for-code-reading/safari-github-02.png" width="24%" style={{ marginLeft: '1%' }} />
+<img src="/assets/expo-app-for-code-reading/safari-github-04.png" width="24%" style={{ marginLeft: '1%' }} />
+<img src="/assets/expo-app-for-code-reading/safari-github-03.png" width="24%" style={{ marginLeft: '1%' }} />
+
+---
+
+## Code Glide
+
+<div style={{ height: '100%' }}>
+  <video src="/assets/expo-app-for-code-reading/codeglide.mp4" controls width="50%" />
+</div>
+
+---
+
+# こんなの作ってます
+
+- ニッチなUI系ライブラリの紹介
+- React Native(Expo)の`テキスト`、`スクロール`と戦う話
+- （このアプリのβユーザ募集してます）
+
+---
+
+export default Split
+
+<img src="/assets/expo-app-for-code-reading/code-glide-syntax-highlight-01.png" width="50%" />
+
+## Syntax highlight
+
+[conorhastings/react-syntax-highlighter](https://github.com/conorhastings/react-syntax-highlighter)
+
+---
+
+## react-syntax-highlighter
+
+- Tree shakable :muscle:
+- highlight.js or Prism
+- 対応言語、テーマ豊富
+- custom rendererを実装すればネイティブ対応
+- 参考実装: [conorhastings/react-native-syntax-highlighter](https://github.com/conorhastings/react-native-syntax-highlighter)
+
+---
+
+export default Split
+
+<img src="/assets/expo-app-for-code-reading/code-glide-word-highlight-01.png" width="50%" />
+
+## Word highlight
+
+[clauderic/react-native-highlight-words](https://github.com/clauderic/react-native-highlight-words)
+
+---
+
+## react-native-highlight-words
+
+- 複数単語対応 :muscle:
+- スタイル指定しやすい、扱いやすい
+- 実装は`Nested Text`
+
+---
+
+export default Split
+
+<img src="/assets/expo-app-for-code-reading/nested-text.png" width="50%" />
+
+## Nested Text
+
+```jsx
+import { Text } from 'react-native'
+
+<Text>
+  hoge
+  <Text style={{ color: 'red' }}>foo</Text>
+  bar
+</Text>
+```
+
+> https://facebook.github.io/react-native/docs/text.html#nested-text
+
+---
+
+export default Split
+
+<div style={{ height: '100%' }}>
+  <video src="/assets/expo-app-for-code-reading/scroll-sync.mp4" controls width="50%" />
+</div>
+
+## スクロール同期
+
+1. コード用Scroll View
+2. 単語ハイライト用Scroll View
+
+- 1、2をabsoluteで重ねる
+- 1の縦スクロールイベントで2をスクロール
+
+若干スクロールが遅延する... :sob:
+
+---
+
+export default Split
+
+<div style={{ height: '100%' }}>
+  <video src="/assets/expo-app-for-code-reading/scroll-focused-words.mp4" controls width="50%" />
+</div>
+
+## フォーカス移動
+
+- highlight wordsの座標を取得
+- 画面内にくるようスクロール
+
+---
+
+export default Split
+
+<img src="/assets/expo-app-for-code-reading/nested-text-with-onlayout.png" width="90%" />
+
+```jsx
+import { Text } from 'react-native'
+
+<Text
+  onLayout={({ nativeEvent: { layout } }) =>
+    console.log("root", layout)
+  }
+>
+  hoge
+  <Text
+    style={{ color: "red" }}
+    onLayout={({ nativeEvent: { layout } }) =>
+      console.log("nested", layout)
+    }
+  >
+    foo
+  </Text>
+  bar
+</Text>
+```
+
+... :thinking_face:
+
+---
+
+## １つのTextに結合される
+
+<img src="/assets/expo-app-for-code-reading/nested-text-inspected.png" width="50%" />
+
+＝座標計算の単位としてnested textは使えない
+
+> &mdash; [`onLayout` and `.measure` doesn't work for nested Text components · Issue #11650 · facebook/react-native](https://github.com/facebook/react-native/issues/11650)
+
+---
+
+export default Split
+
+<img src="/assets/expo-app-for-code-reading/pseudo-nested-text.png" width="90%" />
+
+## 愚直にView+flex
+
+```jsx
+import { View, Text } from 'react-native'
+
+<View
+  style={{ flexDirection: "row" }}
+  onLayout={({ nativeEvent: { layout } }) =>
+    console.log("root", layout)}
+>
+  <Text>hoge</Text>
+  <Text
+    style={{ color: "red" }}
+    onLayout={({ nativeEvent: { layout } }) =>
+      console.log("nested", layout)
+    }
+  >
+    foo
+  </Text>
+  <Text>bar</Text>
+</View>
+```
+
+---
+
+export default Split
+
+<div style={{ height: '100%' }}>
+  <video src="/assets/expo-app-for-code-reading/context-menu.mp4" controls width="50%" />
+</div>
+
+## Context menu
+
+- 言語、選択ワードから生成
+- ブラウザで開いたり
+- アプリ内で再検索したり
+- ASTにバラしたり（したい
+- Language server（したい
+
+---
+
+## テキスト長押し
+
+<img src="/assets/expo-app-for-code-reading/selectable-browser.png" width="18%" style={{ marginLeft: '1%' }} />
+<img src="/assets/expo-app-for-code-reading/selectable-react-native.png" width="18%" style={{ marginLeft: '1%' }} />
+
+ブラウザはよしなに"単語"が選択できる  
+Tooltip（黒いの）はRNでもカスタマイズできない
+
+---
+
+export default Split
+
+<img src="/assets/expo-app-for-code-reading/nested-text-onnlongpress.png" width="50%" />
+
+## 選択可能なテキストの最小単位＝`<Text />`
+
+```jsx
+import { View, Text } from 'react-native'
+
+<Text
+  onLongPress={(e) =>
+    console.log(e.nativeEvent)}
+>
+  hoge foo bar
+</Text>
+```
+
+選択範囲の調整や、意味的な"単語"を選択できない
+
+---
+
+export default Split
+
+<img src="/assets/expo-app-for-code-reading/choose-selection.png" width="50%" />
+
+## 暫定的に...
+
+- 拡張子ごとにtokenizer実装可能
+- まずは雑に`" "`でsplit
+- ちぎった単語から何を選ぼうとしていたか選んでもらう
+
+文字サイズ+タップ位置座標から算出できそう :thinking_face:
+
+---
+
+## テキスト、まとめ
+
+- Nested Textは基本楽使いこむとすると複雑
+- 座標はnestしてる親が基準
+- nested textでonLayoutは動かない
+- .measureも子テキストに対して効かない（親の座標が取れる）
+- 単語選択の単位＝`<Text />`ごと
+
+---
+
+## おまけ：検討したもの対応表
+
+|web|React Native|Expo|
+|---|---|---|---|
+|クリップボード操作|Clipboard|Clipboard|
+|文字列ハイライト|react-native-highlight-words|〃|
+|Syntax highlight|react-syntax-highlighter+custom renderer|〃|
+|Sentry|react-native-sentry|Expo|
+|Google Analytics|ある|:sob:|
+|Firebase Auth(GitHub)|ある|:sob:|
+|Auth0 SDK(Lock)|ある|:sob:|
+
+---
+
+## webでいいのでは？ :thinking_face:
+
+そう思う...
+今からでも遅くないと思う...  
+
+**でもおかげでReact Native(Expo)の知識が深まった...**
+
+---
+
+# END
