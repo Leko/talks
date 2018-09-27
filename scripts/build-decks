@@ -3,7 +3,7 @@ set -eux
 
 $(npm bin)/rimraf dist
 
-MDXs=$(ls src/*.mdx | xargs -I'{}' basename {} .mdx)
+MDXs=$(ls src/*.mdx | xargs -n1 -I'{}' basename {} .mdx)
 
 echo $MDXs | xargs -I'{}' -n1 $(npm bin)/mdx-deck build src/{}.mdx --no-html --out-dir ./dist/{}
 echo $MDXs | xargs -I'{}' -n1 $(npm bin)/mdx-deck pdf src/{}.mdx --out-file {}.pdf
