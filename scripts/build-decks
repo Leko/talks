@@ -3,10 +3,13 @@ set -eux
 
 $(npm bin)/rimraf dist
 
-MDXs=$(ls src/*.mdx | xargs -n1 -I'{}' basename {} .mdx)
+MDXs=($(ls src/*.mdx | xargs -n1 -I'{}' basename {} .mdx))
 
-echo $MDXs | xargs -I'{}' -n1 $(npm bin)/mdx-deck build src/{}.mdx --no-html --out-dir ./dist/{}
-echo $MDXs | xargs -I'{}' -n1 $(npm bin)/mdx-deck pdf src/{}.mdx --out-file {}.pdf
-echo $MDXs | xargs -I'{}' -n1 $(npm bin)/mdx-deck screenshot src/{}.mdx --out-file {}.png
+for MDX in "${MDXs[@]}"
+do
+  $(npm bin)/mdx-deck build src/${MDX}.mdx --no-html --out-dir ./dist/${MDX}
+  $(npm bin)/mdx-deck pdf src/${MDX}.mdx --out-file ${MDX}.pdf
+  $(npm bin)/mdx-deck screenshot src/${MDX}.mdx --out-file ${MDX}.png
+done
 
 cp -R ./src/assets ./dist/assets
