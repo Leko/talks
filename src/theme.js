@@ -1,7 +1,5 @@
 import { future as theme } from "mdx-deck/themes";
 
-console.log(theme);
-
 export default {
   ...theme,
   font: 'Roboto, sans-serif, "Noto Sans Japanese", "YuGothic", "Yu Gothic"',
