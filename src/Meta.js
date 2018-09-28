@@ -27,6 +27,7 @@ export const Meta = ({
       content={`https://talks.leko.jp/${slug}.png`}
     />
     <meta name="twitter:url" content={`https://talks.leko.jp/${slug}/`} />
+    <meta name="viewport" content="width=1400" />
     <title>{title}</title>
   </React.Fragment>
 );
