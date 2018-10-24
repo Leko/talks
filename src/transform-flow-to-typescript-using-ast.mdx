@@ -1,0 +1,312 @@
+---
+
+- 対象: FlowからTSに引っ越そうとしているが、コストや手間に尻込みしているエンジニア
+- 感想: TS移行できそう！ASTに可能性を感じる！！
+- 手段: FlowからTypeScriptのコード変換がASTを使うと低コストでできることを伝える
+
+---
+
+import { Head } from "mdx-deck"
+import { Split } from 'mdx-deck/layouts'
+import { CodeSurfer } from "mdx-deck-code-surfer"
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus"
+import deindent from "deindent"
+import { Meta } from './Meta'
+export { code as theme } from 'mdx-deck/themes'
+
+<Head>
+  <Meta
+    title='実践AST FlowからTypeScriptへの変換'
+    description='We Are JavaScripters! @25th Leko'
+    slug='expo-app-for-code-reading'
+    publishedAt={new Date(2018, 8, 28)}
+  />
+  <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+</Head>
+
+# 実践AST<br />Flowから<br />TypeScriptへの変換
+
+[We Are JavaScripters! @25th](https://wajs.connpass.com/event/103761/)
+Leko
+
+---
+
+## Leko
+
+<img src="/assets/self_avatar.png" height="250" />
+<img src="/assets/self_bio.png" height="250" />
+<img src="/assets/self_contributions.png" height="250" />
+
+Node.js, React, React Native, React Native for web
+
+---
+
+## FlowからTypeScript(TS)に移行中
+
+- 主要な移行対象: 12リポジトリ
+- 中身はmonorepoなので実質5-60パッケージ
+
+→ AST変換でいけないかな
+
+---
+
+## 話したいこと
+
+- AST変換を活用したコード変換の可能性
+- コストetcでTS化をやれてない方の契機に
+
+---
+
+## 話さないこと
+
+- Flowとは何か、TypeScriptとは何か
+- TS化に至った背景や意思決定の話
+- FlowとTSの機能比較や型システムの話
+- Babelプラグインの作り方
+
+---
+
+## Flow → TypeScript
+
+- 思想は違うけど、結果書く型定義はけっこう似てる
+- 複雑な型を使うと差異が大きくなる
+
+---
+
+## 例えば
+
+<img src="/assets/transform-flow-to-typescript-using-ast/flow-import-type.png" width="47%" style={{ marginRight: 10 }} />
+<img src="/assets/transform-flow-to-typescript-using-ast/ts-import-type.png" width="45%" />
+
+<img src="/assets/transform-flow-to-typescript-using-ast/flow-object-keys.png" width="49%" style={{ marginRight: 10 }} />
+<img src="/assets/transform-flow-to-typescript-using-ast/ts-object-keys.png" width="45%" />
+
+---
+
+## Flow → TypeScript変換の大枠
+
+1. Flowで書かれたコードを**AST**にバラしてTSに変換
+1. ビルド周りの整備（tsconfig, @types etc）
+1. `tsc`で型チェック通す
+1. `.d.ts`を吐く
+
+---
+
+## Flow → TypeScript with Babel
+
+src/以下のFlowで書かれたjsを、tssrc/に出力
+
+```
+babel \\
+  --no-babelrc \\
+  --plugins @babel/plugin-syntax-class-properties \\
+  --plugins @babel/plugin-syntax-object-rest-spread \\
+  --plugins @babel/plugin-syntax-jsx \\
+  --plugins @babel/plugin-syntax-flow \\
+  --plugins {{TS変換用のBabelプラグイン}} \\
+  src --out-dir tssrc
+```
+
+---
+
+## syntax... = 解釈だけ、変換しない
+
+```
+class Hoge {
+	static staticProperty = "babelIsCool";
+}
+```
+
+<span>&nbsp;</span>
+
+```
+// @babel/plugin-syntax-class-properties
+class Hoge {
+	static staticProperty = "babelIsCool";
+}
+```
+
+<span>&nbsp;</span>
+
+```
+// @babel/plugin-transform-class-properties
+class Hoge {}
+Hoge.staticProperty = "babelIsCool";
+```
+
+---
+
+```
+babel \\
+  --no-babelrc \\
+  --plugins @babel/plugin-syntax-class-properties \\
+  --plugins @babel/plugin-syntax-object-rest-spread \\
+  --plugins @babel/plugin-syntax-jsx \\
+  --plugins @babel/plugin-syntax-flow \\
+  --plugins {{TS変換用のBabelプラグイン}} \\
+  src --out-dir tssrc
+```
+
+- [Kiikurage/babel-plugin-flow-to-typescript](https://github.com/Kiikurage/babel-plugin-flow-to-typescript)  
+- [bcherny/flow-to-typescript](https://github.com/bcherny/flow-to-typescript)  
+
+---
+
+## 複雑な型にも対応してそう！！
+
+<img src="/assets/transform-flow-to-typescript-using-ast/babel-plugin-flow-to-typescript.png" height="460" style={{ marginRight: 10 }} />
+<img src="/assets/transform-flow-to-typescript-using-ast/flow-to-typescript.png" height="460" />
+
+---
+
+## すでにあった！勝った！
+
+---
+
+## そんな訳ない
+
+- どちらも未対応の構文がある
+- 全ての構文をもれなくマッピングするのは無理筋
+
+先述のBabelプラグインの**AST変換**を    
+自分の用途に耐える変換処理を書き足す
+
+---
+
+# AST
+
+Abstract Syntax Tree
+
+---
+
+export default Split
+
+<img src="/assets/transform-flow-to-typescript-using-ast/ast-basic.png" width="90%" />
+
+## AST=抽象構文木
+- 構文を木構造にしたもの
+- 構文ごとに**type**がある
+- VariableDeclaration  
+= 変数定義
+- NumericLiteral  
+= 数値リテラル etc
+- 欲しいtypeを指定して変換
+
+---
+
+export default Split
+
+<div>
+  <img src="/assets/transform-flow-to-typescript-using-ast/ast-bigint2.png" width="90%" />
+  <img src="/assets/transform-flow-to-typescript-using-ast/ast-bigint3.png" width="90%" />
+</div>
+
+## ex. BigInt
+- BinaryExpression  
+= 二項演算
+- CallExpression  
+= 関数呼び出し
+
+---
+
+## ex. `* as`を追加したい
+
+```js
+// Flow
+import React from 'react'
+
+// ↓
+
+// TS
+import * as React from 'react'
+```
+
+---
+
+export default Split
+
+<div>
+  <img src="/assets/transform-flow-to-typescript-using-ast/ast-react1.png" width="90%" />
+  <img src="/assets/transform-flow-to-typescript-using-ast/ast-react2.png" width="90%" />
+</div>
+
+## ex. `* as`を追加
+さまざまなtypeがある。  
+プロパティ値変えたり構造を変更し構文が変化
+
+type一覧は[@babel/typesのドキュメント](https://babeljs.io/docs/en/babel-types) ※
+
+<small>※ASTパーサにBabel以外を使う場合は別</small>
+
+---
+
+export default Split
+
+<img src="/assets/transform-flow-to-typescript-using-ast/ast-explorer.png" width="90%" />
+
+## AST Explorer
+小さくはじめて何度もデバッグ
+
+https://astexplorer.net/
+
+---
+
+## AST書き換えた後どうやってtsになるの
+
+<img src="/assets/transform-flow-to-typescript-using-ast/ast-to-code.png" width="65%" />
+
+ASTを実コードに変換する処理がある
+
+---
+
+## ダメなら、試して、書き換える
+
+<img src="/assets/transform-flow-to-typescript-using-ast/flow-playground.png" height="300" style={{ marginRight: 10 }} />
+<img src="/assets/transform-flow-to-typescript-using-ast/ts-playground.png" height="300" style={{ marginRight: 10 }} />
+<img src="/assets/transform-flow-to-typescript-using-ast/ast-explorer2.png" height="300" />
+
+---
+
+## 無いものは足す
+
+<img src="/assets/transform-flow-to-typescript-using-ast/babel-plugin-flow-to-typescript-prs.png" height="460" />
+
+マージされるまで一旦forkでしのぐ
+
+---
+
+## React周りの型名が食い違っている
+
+`React.Node` → `React.ReactNode` etc... :sob:  
+これもBabelプラグイン書いて変換
+
+<img src="/assets/transform-flow-to-typescript-using-ast/flow-children-type.png" width="49%" style={{ marginRight: '1%' }} />
+<img src="/assets/transform-flow-to-typescript-using-ast/ts-children-type.png" width="50%" />
+
+---
+
+<img src="/assets/transform-flow-to-typescript-using-ast/zapshot-diff.png" height="560" />
+
+https://github.com/Leko/zapshot/pull/58/files
+
+---
+
+## まとめ
+- 困難を苦労ではなく腕力で殴り倒す:muscle:
+- AST活用してts変換を自動化できた
+- ベースとなる実装があれば、できると思う  
+　- ゼロベースで作るのはかなり大変
+
+forkは[こちら](https://github.com/CureApp/babel-plugin-flow-to-typescript)にあります
+
+---
+
+## その他ASTを活用したツール例
+- prettier (コードフォーマッタ)
+- Textlint (自然言語linter)
+- jest-codemods (各テストランナー → Jest)
+- jscodeshift (汎用的なコード変換ツール)
+
+---
+
+## おわり
