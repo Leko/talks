@@ -1,0 +1,250 @@
+import { Head, Image } from "mdx-deck"
+import { Split } from 'mdx-deck/layouts'
+import { CodeSurfer } from "mdx-deck-code-surfer"
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus"
+import deindent from "deindent"
+import { Meta } from './Meta'
+import _theme from './theme'
+export const theme = {
+  ..._theme,
+  colors: {
+    ..._theme.colors,
+    link: '#0dd3c5',
+  },
+}
+
+<Head>
+  <Meta
+    title='React NativeアプリをBitriseでCDする'
+    description='CI/CD Test Night #2 Leko'
+    slug='continuous-delivery-with-bitrise-on-react-native'
+    publishedAt={new Date(2018, 11, 8)}
+  />
+  <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous" />
+</Head>
+
+<Image style={{
+  zIndex: -1,
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  position: 'fixed',
+  background: 'linear-gradient(135deg,#990fc3 0,#760fc3 16%,#652ec3 52%,#652ec3 52%,#0dd3c5 100%,#7db9e8 100%)',
+}} />
+
+# React NativeアプリをBitriseでCDする
+
+[CI/CD Test Night #2](https://testnight.connpass.com/event/103068/)
+Leko
+
+---
+
+## Leko / れこ
+
+<img src="/assets/self_avatar.png" height="250" />
+<img src="/assets/self_bio.png" height="250" />
+<img src="/assets/self_contributions.png" height="250" />
+
+Chief engineer at <img src="https://cureapp.co.jp/img/footer-logo.png" height="48" />  
+ビルド周り整えて自動化するのがすき
+
+---
+
+## 話したいこと
+- こんな感じでBitrise使ってデプロイしてます
+- Bitriseを使う前と後の差
+- 現在のフローに落ち着くまでのTry&Error
+
+---
+
+## Context
+
+- CD=Continuous delivery
+- ネイティブアプリのCDしたい・してる方向け
+- Bitriseすでに使ってる・検討している方向け
+- iOS/Android両方のアプリを作っています
+- １チームにエンジニア２〜３人の話
+
+---
+
+## CI/CD flow
+
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/ci-cd-flow.png" width="100%" />
+
+---
+
+## 最初はCircleCIだけ
+- CIは最初から回ってた
+- AWS関連だけCD
+- アプリは手元ビルド＋手動アップロード
+
+---
+
+1. Xcodeを起動
+1. Product > Archiveを選択
+1. しばらく待つ（5-10分）
+1. エクスポートメソッド（Ad-Hoc）を選択
+1. オプション（CodeSign用アカウント）を選択
+1. しばらく待つ（2-3分）
+1. DeployGateを開く
+1. 出来上がった.ipa、.apkをDeployGateにドロップ
+
+---
+
+## まごころを込めても開発は遅い
+- アプリのビルド待ち2~30分
+- その間プログラムいじれない、開発止まる
+- CPU/メモリも枯渇する
+
+多い日は１日に3-4回ステージングにデプロイする  
+＝2h/dくらいデプロイに溶けてる
+
+---
+
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/deploy-from-cli.png" width="90%" />
+
+> &mdash; [CLIだけでReact NativeアプリをビルドしてDeployGateにデプロイする方法 | WEB EGG](https://blog.leko.jp/post/how-to-build-and-deploy-to-deploygate-in-cli/)
+
+---
+
+## stgへのデプロイがコマンド一発に
+ローカルで動かすと開発は止まる  
+（トイレ・お菓子休憩に代わった）
+
+CDできないと非効率的
+
+---
+
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/bitrise.png" width="90%" />
+
+---
+
+## ワークフロー編集画面
+
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/workflow-screen.png" width="100%" />
+
+---
+
+## 証明書の"抽出"・アップロード
+デプロイしたいScheme選ぶ  
+必要な証明書をBitriseにアップロード
+
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/codesigndoc.png" width="100%" />
+
+---
+
+export default Split
+
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/custom-scripts-01.png" width="80%" />
+
+## オレオレシェルの限界
+
+動いてたのに動かなくなった  
+主にmacOSのアップデート
+
+謎の理由でビルドが通らない
+
+サポートに頼れない
+
+---
+
+## 公式のステップを使おう
+
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/step-xcodebuild.png" width="80%" />
+<br />
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/step-gradle-runner.png" width="80%" />
+
+名前の横に:white_check_mark:ついてるやつ
+
+やってることはほぼ同じ、安定して動く
+
+---
+
+## ビルドまでは自動化できた
+- Artifactsに置けばDLして手動アップロードできる
+- 自動デプロイしたい  
+  ー DeployGate  
+  ー Google Play  
+  ー iTunes connect
+
+---
+
+## DeployGateへのデプロイ
+こちらを使うだけ  
+:bust_in_silhouette:は3rd partyのstep
+
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/step-deploygate.png" width="80%" />
+
+> &mdash; [BitriseのWorkflow Stepsに「DeployGate Upload」が追加されました！](https://medium.deploygate.com/deploygate-upload-steps-on-bitrise-df23a855e63d)
+
+---
+
+## Google Playのデプロイ
+Play consoleにサービスアカウントを作りAPI設定  
+iOSの審査を待つためαトラックに置いとく
+
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/step-google-play.png" width="80%" />
+
+---
+
+## iTunes connectへのバイナリ提出
+手元デプロイerにはおなじみApplication Loader  
+IPASSの設定と、.ipaファイルのパス指定
+
+審査は手動で提出する必要がある
+
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/step-application-loader.png" width="80%" />
+
+---
+
+## 設定例（iOSステージング）
+
+真ん中をOS/デプロイ先ごとに変える
+
+<div style={{display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+  <img src="/assets/continuous-delivery-with-bitrise-on-react-native/step-overview-01.png" width="30%" />
+  &nbsp;→&nbsp;
+  <img src="/assets/continuous-delivery-with-bitrise-on-react-native/step-overview-02.png" width="30%" />
+  &nbsp;→&nbsp;
+  <img src="/assets/continuous-delivery-with-bitrise-on-react-native/step-overview-03.png" width="30%" />
+</div>
+
+---
+
+## アプリのCD（Bitrise）導入後の世界
+- PRをマージ  
+  ー DeployGateへのデプロイ完了
+- git tagしてpush  
+  ー Google Playのαトラックへデプロイ完了  
+  ー iTunes connectへのバイナリ提出完了
+- 審査ボタン押す（手動）
+
+---
+
+## 審査ボタン押す（手動）
+Fastlaneで自動化できるが、2-3年前に使って懲りた  
+スクレイピングなので仕組み上安定しない
+
+AppleがAPI出すまで放置
+
+---
+
+## CI/CD flow（再掲）
+
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/ci-cd-flow.png" width="100%" />
+
+---
+
+<img src="/assets/continuous-delivery-with-bitrise-on-react-native/no-test-no-time.png" width="50%" />
+
+> &mdash; [組織にテストを書く文化を根付かせる戦略と戦術](https://www.slideshare.net/t_wada/test-strategy-and-tactics)
+
+---
+
+# おわり
+
+### （手探り中）
+- キャッシュきちんと効かせて高速化
+- デプロイ完了したらIssueにコメント

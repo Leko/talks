@@ -6,8 +6,14 @@ const header = {
   "text-transform": "none"
 };
 
+console.log(theme);
+
 export default {
   ...theme,
+  colors: {
+    ...theme.colors,
+    background: "#002C2B"
+  },
   h1: {
     ...(theme.h1 || {}),
     ...header
@@ -28,5 +34,8 @@ export default {
   },
   code: {
     fontFamily
+  },
+  i: {
+    fontSize: "24px"
   }
 };
