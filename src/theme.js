@@ -6,8 +6,6 @@ const header = {
   "text-transform": "none"
 };
 
-console.log(theme);
-
 export default {
   ...theme,
   colors: {
