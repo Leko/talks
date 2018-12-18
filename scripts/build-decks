@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 set -eux
 
-# $(npm bin)/rimraf dist
+$(npm bin)/rimraf dist
 
 MDXs=($(ls src/*.mdx | xargs -n1 -I'{}' basename {} .mdx))
 
-# for MDX in "${MDXs[@]}"
-# do
-#   $(npm bin)/mdx-deck build src/${MDX}.mdx --out-dir ./dist/${MDX} \
-#     || $(npm bin)/mdx-deck build src/${MDX}.mdx --no-html --out-dir ./dist/${MDX}
-#   $(npm bin)/mdx-deck pdf src/${MDX}.mdx --out-file ${MDX}.pdf
-#   $(npm bin)/mdx-deck screenshot src/${MDX}.mdx --out-file ${MDX}.png
-# done
+for MDX in "${MDXs[@]}"
+do
+  $(npm bin)/mdx-deck build src/${MDX}.mdx --out-dir ./dist/${MDX} \
+    || $(npm bin)/mdx-deck build src/${MDX}.mdx --no-html --out-dir ./dist/${MDX}
+  $(npm bin)/mdx-deck pdf src/${MDX}.mdx --out-file ${MDX}.pdf
+  $(npm bin)/mdx-deck screenshot src/${MDX}.mdx --out-file ${MDX}.png
+done
 
-# cp -R ./src/assets ./dist/assets
+cp -R ./src/assets ./dist/assets
 
 echo ${MDXs[@]} | node ./scripts/generate-index.js
