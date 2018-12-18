@@ -4,6 +4,7 @@
   "description": "My talks",
   "main": "index.js",
   "scripts": {
+    "postinstall": "scripts/workaround-code-surfer # https://github.com/pomber/code-surfer/issues/8",
     "build": "./scripts/build-decks",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "mdx-deck"
@@ -19,9 +20,10 @@
   },
   "homepage": "https://github.com/Leko/slides#readme",
   "devDependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "deindent": "^0.1.0",
-    "mdx-deck": "^1.7.7",
-    "mdx-deck-code-surfer": "^0.4.1",
+    "mdx-deck": "^1.8.2",
+    "mdx-deck-code-surfer": "^0.5.3",
     "prettier": "^1.14.3",
     "raw-loader": "^0.5.1",
     "rimraf": "^2.6.2"

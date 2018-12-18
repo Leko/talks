@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+patch node_modules/mdx-deck/lib/html.js << DIFF
+37c37,38
+<         'mdx-deck/layouts'
+---
+>         'mdx-deck/layouts',
+>         'mdx-deck-code-surfer'
+DIFF
