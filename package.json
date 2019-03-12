@@ -4,10 +4,9 @@
   "description": "My talks",
   "main": "index.js",
   "scripts": {
-    "postinstall": "scripts/workaround-code-surfer # https://github.com/pomber/code-surfer/issues/8",
     "build": "./scripts/build-decks",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "mdx-deck"
+    "start": "mdx-deck --hot-port 8000"
   },
   "repository": {
     "type": "git",
