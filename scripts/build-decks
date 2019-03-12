@@ -9,7 +9,7 @@ for MDX in "${MDXs[@]}"
 do
   $(npm bin)/mdx-deck build src/${MDX}.mdx --out-dir ./dist/${MDX} \
     || $(npm bin)/mdx-deck build src/${MDX}.mdx --no-html --out-dir ./dist/${MDX}
-  $(npm bin)/mdx-deck pdf src/${MDX}.mdx --out-file ${MDX}.pdf
+  # $(npm bin)/mdx-deck pdf src/${MDX}.mdx --out-file ${MDX}.pdf
   $(npm bin)/mdx-deck screenshot src/${MDX}.mdx --out-file ${MDX}.png
 done
 

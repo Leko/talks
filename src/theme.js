@@ -36,4 +36,8 @@ export default {
   i: {
     fontSize: "24px"
   }
+  // FIXME: liの階層ごとに小さくしたい。。。
+  // "li>li": {
+  //   fontSize: "0.8em"
+  // }
 };

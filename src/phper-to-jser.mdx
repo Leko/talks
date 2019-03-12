@@ -1,0 +1,253 @@
+import { Head } from "mdx-deck";
+import { Split } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import deindent from "deindent";
+import { Meta } from "./Meta";
+export { default as theme } from "./theme";
+
+<Head>
+  <Meta
+    title="PHPerからJSerになった２年間"
+    description="Frontend Training Meetup #1 Leko"
+    slug="phper-to-jser"
+    publishedAt={new Date(2019, 2, 13)}
+  />
+  <link
+    href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css"
+    rel="stylesheet"
+  />
+</Head>
+
+# PHPer から JSer になった２年間
+
+[Frontend Training Meetup #1](https://air-closet.connpass.com/event/89206/)
+Leko
+
+---
+
+## Leko
+
+<img src="/assets/self_avatar.png" height="250" />
+<img src="/assets/self_bio.png" height="250" />
+<img src="/assets/self_contributions.png" height="250" />
+
+Node.js, React, React Native  
+言語の中身読んだり AST 解析で遊ぶのが好き
+
+---
+
+## 話すこと
+
+- jQuery 時代の JS と昨今のフロントエンドの違い（の一部
+- 「なぜ」を考えて時流にのる
+- 自分なりの成長・生存戦略
+
+---
+
+## JSer なりたて（2017）
+
+- 魂は震えてたが React の実務経験はわずか。もっぱら趣味
+- Redux 、書き方はわかるが意義はわからない
+- 自動テストしにくいコンポーネントを量産
+- ライブラリがいちいちわからない
+- AltJS や大量のツール類に圧倒される
+
+```notes
+- 「魂が震える」は2014年末だったらしい
+- Flux の意義とは
+- サーバサイド Node の経験値がほぼゼロ
+- テストは Node、動作はブラウザ、両方動く JS で書く？
+```
+
+---
+
+## 当時思ってたこと（願望含む）
+
+- 効率よくブランクを埋めたい
+- 今使ってるライブラリやツールをなぜ使っているか背景を理解する
+  - その上で適切に技術を選択していきたい
+- 今ではなく近い未来が見える人になりたい
+- 開発者の未来を作る人になりたい
+
+---
+
+# 独断と偏見で選ぶ今を生きる技術
+
+- 「なぜ」を捉える
+- OSS に親しむ
+- 仕組みを理解し咀嚼する
+- 将来像を知る
+- プログラムをプログラミングする技術
+
+---
+
+# 「"jQuery"、聞いたことは有りますが使ったことはないです」
+
+---
+
+# How/What の暗記ゲーで済む世界は終わった
+
+- 開発上の問題 1（Why）
+  - 解決するライブラリやツール A（What、How）
+    - 方法論やベストプラクティス 1（How）
+  - 解決するライブラリやツール B（What、How）
+    - 方法論やベストプラクティス 1（How）
+  - 解決するライブラリやツール C（What、How）
+    - 方法論やベストプラクティス 1（How）
+- 開発上の問題 2（Why）
+
+```notes
+「Redux の reducer と action はどう分ければいいですか」
+「今度の案件で React？を使うことになったんですがまず何をすれば」
+「SPA なサービス作るためにどうしたらいいですか」
+「webpack ってなんですか？」
+```
+
+---
+
+# 過去から今の「なぜ」を理解してみる
+
+- :x: 昔は良かった
+- :x: 昔はだめだった
+- :x: 全部覚えないとだめ
+- :heavy_check_mark: Why を考えるきっかけ
+
+---
+
+## 記憶を掘り起こす
+
+第一次 JavaScript 黎明期フレームワーク大戦  
+jQuery・jQuery プラグイン全盛期、Ajax、コールバック地獄、this 難しい、オレオレイディオム、CoffeeScript、TypeScript などの AltJS、Less、Sass、minify/Uglify、フロントエンドのテンプレートエンジン、RequireJS などのモジュール化、自動テストツール、WYSIWYG、Grunt、gulp などのタスクランナー、Bower、npm パッケージの台頭、browserify などの module bundler、Babel などの JavaScript コンパイラ、モバイルファースト
+
+第二次 JavaScript MV\* フレームワーク大戦  
+Backbone、Angular、knockout、Promise/A+、pjax、SPA、VirtualDOM、fetch、AMP、SSR
+
+第三次 JavaScript VirtualDOM 大戦  
+React、Vue、Angular、PWA、off the main thread、CSS in JS、ServiceWorker
+
+---
+
+## モジュールむかしばなし
+
+- クラスや関数などをファイル分けて require/import できない
+- 他の言語では当たり前にできるモジュラーな開発ができない
+- ファイルとファイルをつなぐのは`<script>`タグとグローバルスコープ
+- `<script>`タグの順序で依存関係を解決する
+- ライブラリも`<script>`タグの順序を調整して追加
+
+---
+
+## モジュールむかしばなし
+
+- Node.js にある require をブラウザで真似る
+  - RequireJS
+- Node.js にある require がブラウザで動くようにする
+  - Browserify、webpack
+
+「書きやすい JavaScript」を「ブラウザで動く JavaScript」に変換  
+いまや死語の AltJS や型もこの流れを受けた
+
+---
+
+## 静的解析むかしばなし
+
+- フロントに求められる領域が増えアプリケーションが大規模化
+- 型のない大規模アプリケーションの破綻、開発速度の鈍化
+- 静的解析できれば実行せずともバグが防げるのではないか
+- Babel の普及による AST（抽象構文木）の進化
+
+=> 漸進的型付け（React, Flowtype）、静的解析・コード変換
+
+---
+
+## HTTP1.1 むかしばなし
+
+- HTTP1.1 で並列リクエスト数が増えて詰まる
+- 通信ごとのオーバヘッドでパフォーマンス遅延
+- JS で体験をリッチにするとページの表示が遅い
+- 既に DL 済みのリソースを使いまわしたい
+
+=> minify, Uglify, GraphQL, Tree shaking, ServiceWorker
+
+---
+
+## パフォーマンスとメンテナビリティむかしばなし
+
+- 不要な DOM 更新をすると遅い
+- JS で体験をリッチにすると操作がもたつく
+- 必要最小限の DOM 更新によるメンテ不可能な JS
+- 高頻度で発生するイベントでリフロー起こすと遅い
+
+=> VirtualDOM, React/Angular/Vue, IntersectionObserver
+
+---
+
+## 間口を広げるむかしばなし
+
+- JavaScript で（現実的コストで）できることが圧倒的に増えた
+- 開発環境の複雑化、必要知識量の増加
+- 学習コストの増大、ハードルが高くなる
+
+=> Boilerplate（create-XXX-app）、Opinionated（Prettier）、Zero configuration（percel）
+
+---
+
+# 時流にのりながら「役割」を考える
+
+- そのときどきの環境、概念や技術の成熟度、製品要求によって必要なものは変わる
+- 「これさえ覚えれば N 年安泰」なものは JS の世界では少ないと思う
+- 根っこにある問題は噛み砕いてみると結構シンプル
+
+---
+
+# なぜをかんがえる
+
+## 「いまどんな問題が起こってますか」
+
+## 「XXX はどんな問題を解決しますか」
+
+## 「XXX を使わないとなにがおきますか」
+
+## 「XXX では解決しない問題はなんですか」
+
+---
+
+## 「なぜ」だけでは足りなかったこと
+
+納得感のある問題解決
+
+---
+
+# 納得感のある問題解決
+
+- なんか動いた/暫定対応、無闇矢鱈にググりトライアンドエラー
+- スタックトレースちゃんと読む
+- 一次情報からきちんと仕様と挙動を追う
+- Issue 調べて類似ケースを追う
+- ライブラリの中も Babe られたソースも追う
+
+---
+
+# 一次情報
+
+厳密な線引きがあれば知りたい。私はこう思う
+
+- :heavy_check_mark: 公式ドキュメント
+- :heavy_check_mark: GitHub の Issue / Pull Request / Changelog / Release note
+- :heavy_check_mark: ソースコード
+- :heavy_check_mark: MDN
+- :ok_woman: （公式なレビューをうけた）翻訳
+- :ok_woman: 中の人の公式ブログや登壇資料
+- :x: 第三者によるブログ記事
+- :x: この登壇資料
+
+---
+
+## 一次情報の大切さ
+
+- いち早く手に入る
+- 書かれてないことは起こらない（ソースを読む）
+- 仕様なのか誤用なのかバグなのかをちゃんと知る
+- 製作者の期待する使い方で使えれば余計なハマり方をしないで済む
+- 伝言ゲームが起きない
