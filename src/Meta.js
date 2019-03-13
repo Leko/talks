@@ -28,6 +28,12 @@ export const Meta = ({
     />
     <meta name="twitter:url" content={`https://talks.leko.jp/${slug}/`} />
     <meta name="viewport" content="width=1400" />
+    <link
+      rel="alternate"
+      type="application/json+oembed"
+      href={`https://talks.leko.jp/${slug}/oembed.json`}
+      title={title}
+    />
     <title>{title}</title>
   </React.Fragment>
 );
