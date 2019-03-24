@@ -1,0 +1,290 @@
+import { Head } from "mdx-deck";
+import { Split } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+export { default as theme } from "./theme";
+
+<Head>
+  <Meta
+    title="React Nativeとテスタビリティ"
+    description="ReactNativeにゆかりのあるスタートアップが集う会#3"
+    slug="react-native-testability"
+    publishedAt={new Date(2019, 2, 28)}
+  />
+  <link
+    href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css"
+    rel="stylesheet"
+  />
+</Head>
+
+# React Native とテスタビリティ
+
+[ReactNative にゆかりのあるスタートアップが集う会#3](https://r-n.connpass.com/event/121961/)  
+Leko
+
+---
+
+## Leko
+
+<img src="/assets/self_avatar.png" height="250" />
+<img src="/assets/self_bio.png" height="250" />
+<img src="/assets/self_contributions.png" height="250" />
+
+Node.js, React, React Native, TypeScript  
+言語の中身読んだり AST 解析で遊ぶのが好き
+
+---
+
+## 話すこと
+
+- E2E じゃないとテストできないことを可能な限り減らす
+- どうやってテストしていくかの選択肢
+
+---
+
+## 2017 年の私
+
+<img src="/assets/react-native-testability/e2e-slide.png" width="70%" />
+
+[React Native アプリで E2E テストを回してみた - Speaker Deck](https://speakerdeck.com/leko/react-nativeahuritee2etesutowohui-sitemita-3)
+
+---
+
+# 2019 年の私
+
+## E2E よりコスパよくテストできないだろうか :thinking_face:
+
+---
+
+# E2E ってつらくないですか
+
+- 「ひとまず E2E」となるような気軽さではない
+- 第一版作って終わり、誰もメンテしない未来が見える
+- iOS, Android が動作する環境（ex. Bitrise）でしか CI できない
+- コケたことは分かるがどこで何故コケたのかブラックボックス
+
+---
+
+# RN アプリの構成要素を整理する
+
+- Universal JavaScript
+- Redux 関連
+- ユースケース（Redux thunk）
+- サーバサイド（Node.js）
+- コンポーネント
+- ネイティブモジュール
+
+---
+
+# Redux 関連
+
+- reducer, actionCreator, selector etc
+  - Universal なのでいくらでもテスト可能
+- 副作用のあるミドルウェア
+  - 外界、副作用のモックが必要
+
+---
+
+# 外界、副作用のモック
+
+1. **高階関数**
+1. require を書き換える
+
+---
+
+<CodeSurfer
+  title="モックしにくい例"
+  code={require("!raw-loader!assets/react-native-testability/bad-middleware.js")}
+  lang="javascript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[{}, { lines: [1, 6], notes: "importしてそのまま使ってる" }]}
+/>
+
+---
+
+<CodeSurfer
+  title="モックしやすい例"
+  code={require("!raw-loader!assets/react-native-testability/better-middleware.ts")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {},
+    { lines: [1, 2, 3, 5, 8, 12], notes: "interfaceだけ依存" },
+    { lines: [26, 27, 28], notes: "実装を注入する高階関数" }
+  ]}
+/>
+
+---
+
+# jest.mock でいいのでは :thinking_face:
+
+いいと思います。  
+テストフレームワークの機能に頼るのも１つだと思う
+
+---
+
+<CodeSurfer
+  title="ユースケース（Redux thunk）"
+  code={require("!raw-loader!assets/react-native-testability/redux-mock-store.ts")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    { notes: "redux-mock-store が使いやすいと思う" },
+    {
+      lines: [1, 5, 9, 14, 15],
+      notes: "dispatchされたactionを見る"
+    }
+  ]}
+/>
+
+---
+
+# サーバサイド（Node.js）
+
+※Express を想定しています
+
+1. localhost 立てて HTTP クライアントから叩く
+1. HTTP 層とロジックを切り離しユニットテスト
+1. supertest に Express のインスタンスを食わせる
+
+---
+
+<CodeSurfer
+  title="supertestの例"
+  code={require("!raw-loader!assets/react-native-testability/supertest.ts")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {
+      lines: [3, 5],
+      notes: "express()するだけの副作用のない関数を作る"
+    },
+    {
+      lines: [2, 8, 9, 10, 11, 12],
+      notes: "supertestに食わせる"
+    },
+    {
+      lines: [14, 15, 16, 18, 21],
+      notes: "cookieの引き継ぎも容易"
+    },
+    {}
+  ]}
+/>
+
+---
+
+# 結局これ E2E では？ :thinking_face:
+
+そうだと思います...
+
+ハンドラとロジックを分離すれば容易にテスト可能なので例は割愛
+
+---
+
+## 十分カバレッジ取れる
+
+index.ts = listen するだけのファイル / Lambda handler
+
+<img src="/assets/react-native-testability/coverage.png" width="90%" />
+
+---
+
+# コンポーネント
+
+1. react-test-renderer
+1. enzyme
+1. @storybook/storyshots
+
+---
+
+# storyshots
+
+- Storybook に定義した story を実行するスナップショットテスト
+- スナップショットを OFF にもできる
+
+※コンポーネント自体が複雑なロジックを持たないことが前提
+
+---
+
+<CodeSurfer
+  title="storyshotsの設定"
+  code={require("!raw-loader!assets/react-native-testability/storyshots.tsx")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {
+      lines: [7],
+      notes: "ロード中"
+    },
+    {
+      range: [8, 13],
+      notes: "結果が空"
+    },
+    {
+      range: [14, 24],
+      notes: "結果あり"
+    },
+    {
+      range: [28, 43],
+      notes: "jest.config.js"
+    },
+    {
+      lines: [34],
+      notes: "webpackと同じ要領"
+    },
+    {
+      range: [48, 54],
+      notes: "renderOnlyを渡すとスナップショットOFF"
+    },
+    {}
+  ]}
+/>
+
+---
+
+# テストの粒度はかなり荒め
+
+「少なくともエラーにはなっていないこと」しか確かめられない
+
+渡されうる prop のパターンを網羅した storybook が存在する意義/モチベ
+
+これ以上詳細にテストを書く必要が出たら react-test-renderer 使うべきだと思う
+
+---
+
+## ネイティブモジュール（の一部）は Simulator ベースの E2E ではテストできない
+
+ex. Bluetooth &reg;, Push notification
+
+実機でなら動作確認可能な機能たち  
+自動化するとなるとデバイスファームとの実機をリモートから扱う技術が必要
+
+---
+
+# まごころをこめよう :hugging_face:
+
+※この辺の知見ある方いたらぜひお話聞きたい
+
+---
+
+# まとめ
+
+書き方や依存関係を調整することでほとんどの機能はユニットテスト可能になる。  
+細かくテストして素早くイテレーションを回そう
+
+ネイティブモジュール周りのテストってどうしてますか・・・？
+
+---
+
+# おわり

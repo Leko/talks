@@ -1,0 +1,48 @@
+import { Head } from "mdx-deck";
+import { Split } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+export { default as theme } from "./theme";
+
+<Head>
+  <Meta
+    title=".d.tsを解析して破壊的変更を検知する"
+    description="Meguro.es # 20 @ Drecom"
+    slug="semver-detection-on-typescript"
+    publishedAt={new Date(2019, 3, 4)}
+  />
+  <link
+    href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css"
+    rel="stylesheet"
+  />
+</Head>
+
+# .d.ts を解析して破壊的変更を検知する
+
+[Meguro.es # 20 @ Drecom](https://meguroes.connpass.com/event/118731/)  
+Leko
+
+---
+
+## Leko
+
+<img src="/assets/self_avatar.png" height="250" />
+<img src="/assets/self_bio.png" height="250" />
+<img src="/assets/self_contributions.png" height="250" />
+
+Node.js, React, React Native  
+言語の中身読んだり AST 解析で遊ぶのが好き
+
+---
+
+## 話すこと
+
+- semver に思う運用のツラミと既存のアプローチ
+- TypeScript AST
+- TypeScript の undocumented な世界に潜る
+- semver を人間が決めなくていい世界
+
+---
+
+# おわり
