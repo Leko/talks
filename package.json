@@ -4,6 +4,7 @@
   "description": "My talks",
   "main": "index.js",
   "scripts": {
+    "postinstall": "scripts/workaround-code-surfer",
     "build": "./scripts/build-decks",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "mdx-deck --hot-port 8000"
