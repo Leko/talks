@@ -22,6 +22,7 @@ export const Meta = ({
         `
       }}
     />
+    <link rel="canonical" href={`https://talks.leko.jp/${slug}/`} />
     <meta property="og:locale" content={locale} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
