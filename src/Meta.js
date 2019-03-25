@@ -8,6 +8,20 @@ export const Meta = ({
   slug
 }) => (
   <React.Fragment>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-34171537-5"
+    />
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-34171537-5');
+        `
+      }}
+    />
     <meta property="og:locale" content={locale} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
