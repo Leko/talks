@@ -1,0 +1,30 @@
+> require('lodash')
+{ [Function: lodash]
+  templateSettings:
+   { escape: /<%-([\s\S]+?)%>/g,
+     evaluate: /<%([\s\S]+?)%>/g,
+     interpolate: /<%=([\s\S]+?)%>/g,
+     variable: '',
+     imports: { _: [Circular] } },
+  ...
+> require.cache
+[Object: null prototype] {
+  '/home/lekonoor/.ghq/github.com/Leko/slides/node_modules/lodash/lodash.js':
+   Module {
+     id:
+      '/home/lekonoor/.ghq/github.com/Leko/slides/node_modules/lodash/lodash.js',
+     exports:
+      { [Function: lodash]
+        templateSettings: [Object],
+  ...
+> require.cache[require.resolve('lodash')] = {
+...   id: require.resolve('lodash'),
+...   loaded: true,
+...   exports: {},
+... }
+{ id:
+    '/home/lekonoor/.ghq/github.com/Leko/slides/node_modules/lodash/lodash.js',
+    loaded: true,
+    exports: {} }
+> require('lodash')
+{}

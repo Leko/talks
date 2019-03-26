@@ -31,7 +31,7 @@ Leko
 <img src="/assets/self_bio.png" height="250" />
 <img src="/assets/self_contributions.png" height="250" />
 
-Node.js, React, React Native, TypeScript  
+Node.js, TypeScript, React Native, React Native for web  
 言語の中身読んだり AST 解析で遊ぶのが好き
 
 ---
@@ -39,7 +39,9 @@ Node.js, React, React Native, TypeScript
 ## 話すこと
 
 - E2E じゃないとテストできないことを可能な限り減らす
-- どうやってテストしていくかの選択肢
+- RN アプリの構成要素をどうテストしていくか
+
+※Web でもほとんど通用する話だと思う
 
 ---
 
@@ -62,7 +64,7 @@ Node.js, React, React Native, TypeScript
 - 「ひとまず E2E」となるような気軽さではない
 - 第一版作って終わり、誰もメンテしない未来が見える
 - iOS, Android が動作する環境（ex. Bitrise）でしか CI できない
-- コケたことは分かるがどこで何故コケたのかブラックボックス
+- コケたことは分かるが「どこで何故コケたのか」ブラックボックス
 
 ---
 
@@ -89,7 +91,7 @@ Node.js, React, React Native, TypeScript
 # 外界、副作用のモック
 
 1. **高階関数**
-1. require を書き換える
+1. require cache を書き換える
 
 ---
 
@@ -118,6 +120,40 @@ Node.js, React, React Native, TypeScript
     { lines: [26, 27, 28], notes: "実装を注入する高階関数" }
   ]}
 />
+
+---
+
+<CodeSurfer
+  title="requireを書き換えるゴリ押し"
+  code={require("!raw-loader!assets/react-native-testability/require-cache.txt")}
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    { range: [1, 8], notes: "普通にrequireするとこう" },
+    {
+      lines: [10],
+      notes: "requireするとrequire.cacheに保存される"
+    },
+    {
+      range: [20, 24],
+      notes: "require.cacheを上書きする"
+    },
+    {
+      lines: [23, 29, 30],
+      notes: "requireの結果が変わる"
+    }
+  ]}
+/>
+
+---
+
+## ※ES Module（非 require）世界では使えない
+
+Babel で import -> require に変換される前提のアプローチ  
+昔は良かったが、今となってはいい方法ではない。
+
+自前で書かずとも[proxyquire](http://npmjs.com/package/proxyquire)を使えば require の上書きはできる
 
 ---
 
@@ -166,7 +202,7 @@ Node.js, React, React Native, TypeScript
   steps={[
     {
       lines: [3, 5],
-      notes: "express()するだけの副作用のない関数を作る"
+      notes: "expressのインスタンスを返す関数を作る"
     },
     {
       lines: [2, 8, 9, 10, 11, 12],
@@ -182,19 +218,19 @@ Node.js, React, React Native, TypeScript
 
 ---
 
-# 結局これ E2E では？ :thinking_face:
-
-そうだと思います...
-
-ハンドラとロジックを分離すれば容易にテスト可能なので例は割愛
-
----
-
 ## 十分カバレッジ取れる
 
 index.ts = listen するだけのファイル / Lambda handler
 
 <img src="/assets/react-native-testability/coverage.png" width="90%" />
+
+---
+
+# これ E2E では？ :thinking_face:
+
+supertest 使った場合はそうなります
+
+HTTP 層とロジックを分離すれば容易にテスト可能
 
 ---
 
@@ -274,13 +310,15 @@ ex. Bluetooth &reg;, Push notification
 
 # まごころをこめよう :hugging_face:
 
-※この辺の知見ある方いたらぜひお話聞きたい
+目検でも十分なのでは・・・
+
+※ネイティブ層のテストの知見ある方いたらぜひお話聞きたい
 
 ---
 
 # まとめ
 
-書き方や依存関係を調整することでほとんどの機能はユニットテスト可能になる。  
+書き方や依存関係を調整してテストしやすいコードにしておく。  
 細かくテストして素早くイテレーションを回そう
 
 ネイティブモジュール周りのテストってどうしてますか・・・？
