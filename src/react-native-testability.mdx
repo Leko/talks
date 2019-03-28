@@ -7,7 +7,7 @@ export { default as theme } from "./theme";
 
 <Head>
   <Meta
-    title="React Nativeとテスタビリティ"
+    title="React Nativeアプリをどうテストしてますか"
     description="ReactNativeにゆかりのあるスタートアップが集う会#3"
     slug="react-native-testability"
     publishedAt={new Date(2019, 2, 28)}
@@ -18,7 +18,7 @@ export { default as theme } from "./theme";
   />
 </Head>
 
-# React Native とテスタビリティ
+# React Native アプリをどうテストしてますか
 
 [ReactNative にゆかりのあるスタートアップが集う会#3](https://r-n.connpass.com/event/121961/)  
 Leko
@@ -45,32 +45,9 @@ Node.js, TypeScript, React Native, React Native for web
 
 ---
 
-## 2017 年の私
-
-<img src="/assets/react-native-testability/e2e-slide.png" width="70%" />
-
-[React Native アプリで E2E テストを回してみた - Speaker Deck](https://speakerdeck.com/leko/react-nativeahuritee2etesutowohui-sitemita-3)
-
----
-
-# 2019 年の私
-
-## E2E よりコスパよくテストできないだろうか :thinking_face:
-
----
-
-# E2E ってつらくないですか
-
-- 「ひとまず E2E」となるような気軽さではない
-- 第一版作って終わり、誰もメンテしない未来が見える
-- iOS, Android が動作する環境（ex. Bitrise）でしか CI できない
-- コケたことは分かるが「どこで何故コケたのか」ブラックボックス
-
----
-
 # RN アプリの構成要素を整理する
 
-- Universal JavaScript
+- Universal JavaScript（ドメインモデルとか）
 - Redux 関連
 - ユースケース（Redux thunk）
 - サーバサイド（Node.js）
@@ -91,7 +68,7 @@ Node.js, TypeScript, React Native, React Native for web
 # 外界、副作用のモック
 
 1. **高階関数**
-1. require cache を書き換える
+1. require をモックする（proxyquire）
 
 ---
 
@@ -108,7 +85,7 @@ Node.js, TypeScript, React Native, React Native for web
 ---
 
 <CodeSurfer
-  title="モックしやすい例"
+  title="Interface injection"
   code={require("!raw-loader!assets/react-native-testability/better-middleware.ts")}
   lang="typescript"
   showNumbers={false}
@@ -123,44 +100,50 @@ Node.js, TypeScript, React Native, React Native for web
 
 ---
 
+# jest.mock でいいのでは :thinking_face:
+
+いいと思います。  
+テストフレームワークの機能に頼るのも１つだと思う
+
+---
+
 <CodeSurfer
-  title="requireを書き換えるゴリ押し"
-  code={require("!raw-loader!assets/react-native-testability/require-cache.txt")}
+  title="reselectでテスト断面を増やす"
+  code={require("!raw-loader!assets/react-native-testability/reselect.ts")}
+  lang="typescript"
   showNumbers={false}
   theme={vsDarkPlus}
   dark
   steps={[
-    { range: [1, 8], notes: "普通にrequireするとこう" },
+    {},
     {
-      lines: [10],
-      notes: "requireするとrequire.cacheに保存される"
-    },
-    {
-      range: [20, 24],
-      notes: "require.cacheを上書きする"
-    },
-    {
-      lines: [23, 29, 30],
-      notes: "requireの結果が変わる"
+      lines: [15, 23, 31],
+      notes: "テスト断面"
     }
   ]}
 />
 
 ---
 
-## ※ES Module（非 require）世界では使えない
-
-Babel で import -> require に変換される前提のアプローチ  
-昔は良かったが、今となってはいい方法ではない。
-
-自前で書かずとも[proxyquire](http://npmjs.com/package/proxyquire)を使えば require の上書きはできる
-
----
-
-# jest.mock でいいのでは :thinking_face:
-
-いいと思います。  
-テストフレームワークの機能に頼るのも１つだと思う
+<CodeSurfer
+  title="connect をシンプルにできる"
+  code={require("!raw-loader!assets/react-native-testability/connect.ts")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {},
+    {
+      lines: [3, 6],
+      notes: "使うだけ"
+    },
+    {
+      lines: [1, 11],
+      notes: "dispatchするだけ"
+    }
+  ]}
+/>
 
 ---
 
@@ -179,6 +162,22 @@ Babel で import -> require に変換される前提のアプローチ
     }
   ]}
 />
+
+---
+
+# Redux まわり、まとめ
+
+- reducer 周り
+  - 容易に自動テスト可能
+- middleware
+  - interface injection で外界・副作用をモック
+- selector
+  - reselect で細かくちぎって断面を増やす
+- usecase
+  - redux-mock-store
+- connect はシンプルに保ち、自動テストしない
+
+RN を 0.59 にして Hooks 使い始めると変わってくるかも...？
 
 ---
 
@@ -238,7 +237,7 @@ HTTP 層とロジックを分離すれば容易にテスト可能
 
 1. react-test-renderer
 1. enzyme
-1. @storybook/storyshots
+1. **@storybook/storyshots**
 
 ---
 
@@ -295,7 +294,32 @@ HTTP 層とロジックを分離すれば容易にテスト可能
 
 渡されうる prop のパターンを網羅した storybook が存在する意義/モチベ
 
-これ以上詳細にテストを書く必要が出たら react-test-renderer 使うべきだと思う
+これ以上詳細にテストを書く必要が出たら react-test-renderer 使うべきだと思う  
+disabled 制御、要素の表示・非表示 etc
+
+---
+
+<CodeSurfer
+  title="withFormik HoC"
+  code={require("!raw-loader!assets/react-native-testability/formik.tsx")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[{}, { range: [9, 17], notes: "主にテストしたいのはバリデーション" }]}
+/>
+
+---
+
+<CodeSurfer
+  title="formikのロジックのテストは容易"
+  code={require("!raw-loader!assets/react-native-testability/formik-test.ts")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[{}]}
+/>
 
 ---
 
@@ -313,15 +337,6 @@ ex. Bluetooth &reg;, Push notification
 目検でも十分なのでは・・・
 
 ※ネイティブ層のテストの知見ある方いたらぜひお話聞きたい
-
----
-
-# まとめ
-
-書き方や依存関係を調整してテストしやすいコードにしておく。  
-細かくテストして素早くイテレーションを回そう
-
-ネイティブモジュール周りのテストってどうしてますか・・・？
 
 ---
 

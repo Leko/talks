@@ -41,7 +41,46 @@ Node.js, React, React Native
 - semver に思う運用のツラミと既存のアプローチ
 - TypeScript AST
 - TypeScript の undocumented な世界に潜る
-- semver を人間が決めなくていい世界
+- semver を自動計算するアプローチ
+
+---
+
+## Semantic Versioning
+
+- `MAJOR`: make incompatible API changes,
+- `MINOR`: add functionality in a backwards-compatible manner, and
+- `PATCH`: make backwards-compatible bug fixes.
+
+https://semver.org
+
+---
+
+## Conventional Commit
+
+- もとは Angular のコミット規約がもとだったと思う
+- feat, chore, fix, test, docs などよく見るやつ
+- CHANGELOG の自動生成などもこなすデキる子
+
+https://www.conventionalcommits.org
+
+---
+
+## Semantic Release
+
+- fix(pencil): Patch
+- feat(pencil): Minor
+- perf(pencil): Major
+- BREAKING CHANGE: Major
+
+https://github.com/semantic-release/semantic-release
+
+---
+
+## 既存の semver 運用
+
+- 「人間が」どのタイプの変更か判断して手動で振ってる
+  - 多くのアプローチはコミットメッセージに情報を込める
+- その判断結果をベースに諸々効率化できる
 
 ---
 
