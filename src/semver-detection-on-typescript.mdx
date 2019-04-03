@@ -27,60 +27,260 @@ Leko
 
 ## Leko
 
-<img src="/assets/self_avatar.png" height="250" />
-<img src="/assets/self_bio.png" height="250" />
-<img src="/assets/self_contributions.png" height="250" />
+<img src="/assets/self_avatar.png" height="380" />
+<img src="/assets/self_bio.png" height="380" />
+<img src="/assets/self_contributions.png" height="380" />
 
 Node.js, React, React Native  
 言語の中身読んだり AST 解析で遊ぶのが好き
 
 ---
 
-## 話すこと
+## これの人です
 
-- semver に思う運用のツラミと既存のアプローチ
-- TypeScript AST
-- TypeScript の undocumented な世界に潜る
-- semver を自動計算するアプローチ
+<img src="/assets/ts-meetup.png" height="80%" />
 
 ---
 
-## Semantic Versioning
+## 話すこと
 
-- `MAJOR`: make incompatible API changes,
-- `MINOR`: add functionality in a backwards-compatible manner, and
-- `PATCH`: make backwards-compatible bug fixes.
+- TypeScript の
+  - AST
+  - JS API（CLI コマンド以外から扱う）
+  - LanguageService
 
-https://semver.org
+TypeScript を日常的に使ってる方がターゲット
 
 ---
 
 ## Conventional Commit
 
-- もとは Angular のコミット規約がもとだったと思う
-- feat, chore, fix, test, docs などよく見るやつ
-- CHANGELOG の自動生成などもこなすデキる子
-
-https://www.conventionalcommits.org
-
----
-
-## Semantic Release
-
-- fix(pencil): Patch
-- feat(pencil): Minor
-- perf(pencil): Major
-- BREAKING CHANGE: Major
-
-https://github.com/semantic-release/semantic-release
-
----
-
-## 既存の semver 運用
+feat, chore, fix, test, docs などのプレフィックスのコミット
 
 - 「人間が」どのタイプの変更か判断して手動で振ってる
-  - 多くのアプローチはコミットメッセージに情報を込める
-- その判断結果をベースに諸々効率化できる
+- その判断結果をベースに諸々効率化する
+
+---
+
+# .d.ts を解析して publish 前に破壊的変更を自動検知できないだろうか？
+
+---
+
+# AST(Abstract Syntax Tree)
+
+<img
+  src="/assets/semver-detection-on-typescript/ts-ast-explorer.png"
+  width="90%"
+/>
+
+https://ts-ast-viewer.com
+
+https://astexplorer.net
+
+---
+
+# TypeScript AST Parser
+
+- @babel/parser (a.k.a babylon)
+- @typescript-eslint/typescript-estree
+- **TypeScript**
+
+色々あるけど今回は TypeScript AST（TS の API）
+
+---
+
+<CodeSurfer
+  title="TypeScript AST"
+  code={require("!raw-loader!assets/semver-detection-on-typescript/ts-ast.ts")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {},
+    {
+      range: [4, 7],
+      notes: "compilerOptionsを取得"
+    },
+    {
+      lines: [9],
+      notes: "ts.Program"
+    },
+    {
+      lines: [10, 12],
+      notes: "ts.SourceFile（AST Root）"
+    }
+  ]}
+/>
+
+---
+
+<CodeSurfer
+  title="TypeScript AST"
+  code={require("!raw-loader!assets/semver-detection-on-typescript/ts-ast-2.ts")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {
+      range: [1, 3],
+      notes: "例えばこんなファイル"
+    },
+    {
+      lines: [3, 9],
+      notes: "この場合astNode = `export { hoge };`の部分"
+    },
+    {
+      lines: [11, 12],
+      notes: "構文の種類名"
+    },
+    {
+      lines: [14, 15],
+      notes: "コード上の位置"
+    },
+    {
+      lines: [17, 18],
+      notes: "構文の種類を判定したり"
+    },
+    {
+      range: [19, 23],
+      notes: "ex. exportされた値の名前一覧"
+    },
+    {}
+  ]}
+/>
+
+---
+
+## API Extractor(公式ツール)
+
+<div style={{ padding: 20, background: "white" }}>
+  <img src="https://api-extractor.com/images/ae-flow-chart.svg" height="400" />
+</div>
+
+https://api-extractor.com
+
+---
+
+<CodeSurfer
+  title="API Report"
+  code={require("!raw-loader!assets/semver-detection-on-typescript/api-extractor.json.txt")}
+  lang="json"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {
+      range: [1, 10],
+      notes: "例えばこんなファイル"
+    },
+    {
+      range: [198, 213],
+      notes: "コード表現をJSON化したものが生成される"
+    }
+  ]}
+/>
+
+---
+
+<CodeSurfer
+  title="false positive"
+  code={require("!raw-loader!assets/semver-detection-on-typescript/bad-case.ts")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {
+      range: [1, 6],
+      notes: "「結果的な型」は変わってないが、具体的な ts のコードが変わってる"
+    }
+  ]}
+/>
+
+---
+
+## TypeScript Compiler API
+
+> &mdash; [TypeScript Compiler Internals · TypeScript Deep Dive](https://basarat.gitbooks.io/typescript/docs/compiler/overview.html)
+
+型チェック処理は 23,000+ lines...  
+理解しきって扱いこなすのはかなり厳しそう
+
+---
+
+## VSCode で型にマウスホバーしたときのあれ
+
+<img
+  src="/assets/semver-detection-on-typescript/vscode-unwrap.png"
+  width="90%"
+/>
+
+---
+
+<CodeSurfer
+  title="マウスホバーのあれ＝LanguageService"
+  code={require("!raw-loader!assets/semver-detection-on-typescript/quick-info.ts")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {
+      range: [1, 5],
+      notes: "LanguageService#getQuickInfoAtPosition"
+    },
+    {
+      range: [9, 11],
+      notes: "Aにカーソルを合わせたとしたら"
+    },
+    {
+      lines: [20, 22, 24, 26, 28, 30, 32, 34],
+      notes: "type aliasを解いた結果が手に入る"
+    }
+  ]}
+/>
+
+---
+
+## LanguageService
+
+> &mdash; [Using the Language Service API · Microsoft/TypeScript Wiki](https://github.com/Microsoft/TypeScript/wiki/Using-the-Language-Service-API)
+
+- [TypeScript の内部処理](https://github.com/Microsoft/TypeScript/blob/78b095647477b6f47d68f72a96252829e61e437c/src/server/session.ts#L1419)
+- [Deno の内部処理](https://github.com/denoland/deno/blob/5f1e42f8ac3a051e83908dcdd0c1f9735b32a79a/js/compiler.ts#L142)
+
+---
+
+## 整形して、比べて、計算する
+
+1. .d.ts から Public API の JSON を生成する（ここまでの話）
+   - 型と関係のない情報を取り除く（引数名とか）
+1. JSON Patch（RFC6902）で JSON を比較
+1. 出てきた差分を分類する
+
+---
+
+# 簡単なデモ
+
+---
+
+## [WIP] デモしたもの
+
+[Leko/dts-diff | commands/summary.ts](https://github.com/Leko/dts-diff/blob/master/src/commands/summary.ts)
+
+TypeScript や API Extractor の内部 API を叩きまくっている  
+ツールとして提供するのは難しそう...継続性が担保できない
+
+---
+
+## 静的解析の可能性
+
+TypeScript の API はプログラムからも扱いやすい  
+Compiler API、TS 固有の AST に関してこのガイドがとても参考になりました
+
+> &mdash; [TypeScript Compiler Internals · TypeScript Deep Dive](https://basarat.gitbooks.io/typescript/docs/compiler/overview.html)
 
 ---
 

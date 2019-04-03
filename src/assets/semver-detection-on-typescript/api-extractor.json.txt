@@ -1,0 +1,328 @@
+{
+  "metadata": {
+    "toolPackage": "@microsoft/api-extractor",
+    "toolVersion": "7.0.17",
+    "schemaVersion": 1000
+  },
+  "kind": "Package",
+  "canonicalReference": "dts-diff",
+  "docComment": "",
+  "name": "dts-diff",
+  "members": [
+    {
+      "kind": "EntryPoint",
+      "canonicalReference": "",
+      "name": "",
+      "members": [
+        {
+          "kind": "Function",
+          "canonicalReference": "(foobar:0)",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export declare function "
+            },
+            {
+              "kind": "Reference",
+              "text": "foobar"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "T"
+            },
+            {
+              "kind": "Content",
+              "text": ", "
+            },
+            {
+              "kind": "Reference",
+              "text": "F"
+            },
+            {
+              "kind": "Content",
+              "text": " = {}>(\n  "
+            },
+            {
+              "kind": "Reference",
+              "text": "xxx"
+            },
+            {
+              "kind": "Content",
+              "text": ": "
+            },
+            {
+              "kind": "Content",
+              "text": "number"
+            },
+            {
+              "kind": "Content",
+              "text": ",\n  "
+            },
+            {
+              "kind": "Reference",
+              "text": "ababa"
+            },
+            {
+              "kind": "Content",
+              "text": ": "
+            },
+            {
+              "kind": "Reference",
+              "text": "ReturnType"
+            },
+            {
+              "kind": "Content",
+              "text": "<typeof "
+            },
+            {
+              "kind": "Reference",
+              "text": "hogehoge"
+            },
+            {
+              "kind": "Content",
+              "text": ">\n"
+            },
+            {
+              "kind": "Content",
+              "text": "): "
+            },
+            {
+              "kind": "Reference",
+              "text": "Partial"
+            },
+            {
+              "kind": "Content",
+              "text": "<("
+            },
+            {
+              "kind": "Reference",
+              "text": "name"
+            },
+            {
+              "kind": "Content",
+              "text": ": string) => string> | null"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "returnTypeTokenRange": {
+            "startIndex": 18,
+            "endIndex": 22
+          },
+          "releaseTag": "Public",
+          "overloadIndex": 0,
+          "parameters": [
+            {
+              "parameterName": "xxx",
+              "parameterTypeTokenRange": {
+                "startIndex": 9,
+                "endIndex": 10
+              }
+            },
+            {
+              "parameterName": "ababa",
+              "parameterTypeTokenRange": {
+                "startIndex": 13,
+                "endIndex": 17
+              }
+            }
+          ],
+          "name": "foobar"
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "A",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type "
+            },
+            {
+              "kind": "Reference",
+              "text": "A"
+            },
+            {
+              "kind": "Content",
+              "text": " = 4;"
+            }
+          ],
+          "releaseTag": "Public",
+          "name": "A"
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "Alias",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type "
+            },
+            {
+              "kind": "Reference",
+              "text": "Alias"
+            },
+            {
+              "kind": "Content",
+              "text": "<"
+            },
+            {
+              "kind": "Reference",
+              "text": "T"
+            },
+            {
+              "kind": "Content",
+              "text": "> = "
+            },
+            {
+              "kind": "Reference",
+              "text": "T"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "releaseTag": "Public",
+          "name": "Alias"
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "B",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type "
+            },
+            {
+              "kind": "Reference",
+              "text": "B"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Reference",
+              "text": "A"
+            },
+            {
+              "kind": "Content",
+              "text": " | "
+            },
+            {
+              "kind": "Reference",
+              "text": "Alias"
+            },
+            {
+              "kind": "Content",
+              "text": "<5>;"
+            }
+          ],
+          "releaseTag": "Public",
+          "name": "B"
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "C",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "type "
+            },
+            {
+              "kind": "Reference",
+              "text": "C"
+            },
+            {
+              "kind": "Content",
+              "text": " = "
+            },
+            {
+              "kind": "Reference",
+              "text": "B"
+            },
+            {
+              "kind": "Content",
+              "text": " | 6;"
+            }
+          ],
+          "releaseTag": "Public",
+          "name": "C"
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "Hoge",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export declare type "
+            },
+            {
+              "kind": "Reference",
+              "text": "Hoge"
+            },
+            {
+              "kind": "Content",
+              "text": " = 1 | 2 | 3 | "
+            },
+            {
+              "kind": "Reference",
+              "text": "C"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "releaseTag": "Public",
+          "name": "Hoge"
+        },
+        {
+          "kind": "Variable",
+          "canonicalReference": "hogehoge",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Reference",
+              "text": "hogehoge"
+            },
+            {
+              "kind": "Content",
+              "text": ": "
+            },
+            {
+              "kind": "Content",
+              "text": "("
+            },
+            {
+              "kind": "Reference",
+              "text": "name"
+            },
+            {
+              "kind": "Content",
+              "text": ": string) => string"
+            }
+          ],
+          "releaseTag": "Public",
+          "name": "hogehoge",
+          "variableTypeTokenRange": {
+            "startIndex": 2,
+            "endIndex": 5
+          }
+        }
+      ]
+    }
+  ]
+}
