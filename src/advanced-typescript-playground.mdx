@@ -1,0 +1,381 @@
+import { Head, Notes } from "mdx-deck";
+import { Split } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+export { default as theme } from "./theme";
+
+<Head>
+  <Meta
+    title="外部ライブラリもインストール・型解釈できるTypeScript playgroundを作った"
+    description="俺得フロントエンド (1) LT会"
+    slug="advanced-typescript-playground"
+    publishedAt={new Date(2019, 3, 4)}
+  />
+  <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+</Head>
+
+# 外部ライブラリもインストール・型解釈できる TypeScript playground を作った
+
+[俺得フロントエンド (1) LT 会](https://opt.connpass.com/event/130433/)  
+Leko
+
+---
+
+## Leko (@L_e_k_o)
+
+<img src="/assets/self_avatar.png" height="360" />
+<img src="/assets/self_bio.png" height="360" />
+<img src="/assets/self_contributions.png" height="360" />
+
+Node.js, React, React Native  
+言語の中身読んだり AST 解析で遊ぶのが好き
+
+---
+
+## 本日話すこと
+
+- 俺が得するからやったこと
+- みんなの役に立つこと（になってほしい）
+
+---
+
+<img src="/assets/advanced-typescript-playground/2019-06-08-01-04-25.png" width="100%" />
+
+---
+
+## TypeScript playground（公式）
+
+- https://www.typescriptlang.org/play/
+- ブラウザだけで完結するTypeScriptのPlayground
+- ちょっとコード書いて型を試すのに便利
+- transpile結果も簡単に確認できる
+- シェア機能で型パズルの出題やTipsの共有も便利
+
+---
+
+## いくつかの設定もトグル可能
+
+<img src="/assets/advanced-typescript-playground/2019-06-08-01-07-31.png" />
+
+---
+
+## 型周りもうひと押しほしい :thinking_face:
+
+- npmモジュール（@types etc）も絡めて型を確かめたいことがある
+  - React, redux, reselect etc
+- tsconfig.jsonを直接いじりたい、それもシェアされてほしい
+
+---
+
+<video src="/assets/advanced-typescript-playground/import-dts.mp4#t=8" controls height="1000" muted autoPlay loop playsInline />
+
+---
+
+## 非公式TypeScript playgroundを作った
+
+- `https://playground.type-puzzle.org`
+- 型のチェックだけ、実行はできない
+- @typesやTS製npmモジュールをインストールし型解釈できる
+- tsconfig.jsonをフル※カスタマイズ可能
+
+---
+
+## 内部技術ピックアップ
+
+- monaco-editor 内部の TypeScript の LanguageService
+- monaco-editor に npm パッケージの型定義を読み込ませる
+- npm パッケージの検索
+- npm パッケージ（型定義ファイル）のインストール
+
+---
+
+## monaco-editor と TypeScript
+
+- [microsoft/monaco-typescript](https://github.com/microsoft/monaco-typescript)
+- monaco-editor（以下monaco）にはブラウザ用にインターフェースを実装したts LanguageServiceが入っている  
+- **monaco.Uri**で仮想的なfileプロトコルをしゃべれる
+
+---
+
+
+export default Split
+
+<div>
+<h2>npm moduleのインストール</h2>
+<h3>参考実装</h3>
+
+[Babel repl](https://babeljs.io/repl/)
+</div>
+
+<img src="/assets/advanced-typescript-playground/2019-06-08-03-15-10.png" width="100%" />
+
+---
+
+## Algolia
+
+高速でフルマネージドな全文検索エンジン（のWebサービス）
+
+- [algolia/npm-search](https://github.com/algolia/npm-search)
+  - npm registryのレプリカをAlgoliaに構築
+- [algolia/instant-search](https://github.com/algolia/react-instantsearch)
+  - AlgoliaのAPIクライアント + UI
+  - 多くのOSSのドキュメントのサイト内検索もこれ
+- とても高速。**大量のレコード管理はちょっとお高い**
+
+<img src="/assets/advanced-typescript-playground/2019-06-08-13-53-42.png" />
+
+---
+
+## npm Public Registry API
+
+[npm/registry](https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md)
+
+（Archiveされてるけど）npm registryのAPIドキュメント
+
+<img src="/assets/advanced-typescript-playground/2019-06-08-14-01-27.png" />
+
+---
+
+## おおまかな実装方針
+
+1. 何かしらのAPIでnpmパッケージを検索
+1. 選択されたパッケージのtarballをnpm registryからfetchし解凍
+1. package.jsonを読み依存ツリーを全探索
+1. monacoに読み込ませる
+
+---
+
+## tarballとCORSの壁
+
+<img src="/assets/advanced-typescript-playground/2019-06-08-14-11-26.png" height="600" />
+
+> &mdash; [add support for CORS headers · Issue #108 · npm/npm-registry-couchapp](https://github.com/npm/npm-registry-couchapp/issues/108#issuecomment-174095040)
+
+---
+
+<CodeSurfer
+  title="@typesのpackage.json: @types/lodash"
+  code={require("!raw-loader!./assets/advanced-typescript-playground/lodash-package.json.txt")}
+  lang="json"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {
+      range: [1, 4],
+      notes: 'package.jsonを見てみる'
+    },
+    {
+      range: [7, 8],
+      notes: 'index.d.tsを`node_modules/@types/lodash/index.d.ts`におけば良さそう'
+    },
+  ]}
+/>
+
+---
+
+<CodeSurfer
+  title="@typesのindex.d.ts: @types/lodash"
+  code={require("!raw-loader!./assets/advanced-typescript-playground/lodash-index.d.ts.txt")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {
+      lines: [14],
+      notes: 'node_modules/@types/lodash/common/common.d.tsに配置すれば良さそう'
+    }
+  ]}
+/>
+
+---
+
+<CodeSurfer
+  title="TS製パッケージのpackage.json: typeorm"
+  code={require("!raw-loader!./assets/advanced-typescript-playground/typeorm-package.json.txt")}
+  lang="json"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {
+      range: [2, 4],
+      notes: 'package.jsonを見てみる'
+    },
+    {
+      range: [12, 12],
+      notes: '.jsを.d.tsに読み替えてindex.d.tsを見ればいい'
+    },
+  ]}
+/>
+
+---
+
+<CodeSurfer
+  title="TS製パッケージのindex.d.ts: typeorm"
+  code={require("!raw-loader!./assets/advanced-typescript-playground/typeorm-index.d.ts.txt")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {
+      lines: [3],
+      notes: '依存パッケージのimport：再帰で良さそう',
+    },
+    {
+      lines: [4],
+      notes: 'import ... from ...：fromの先を取得すれば良さそう',
+    },
+    {
+      lines: [17],
+      notes: 'export * from ...：これもfromを取得すれば良さそう',
+    },
+  ]}
+/>
+
+---
+
+## monaco に npm moduleの型を読ませる
+
+- 編集中のコードの仮想的なパスを指定（ex. `/index.tsx`）
+- .d.tsのコード（string）を手に入れる
+- 型解釈されるように配置（ex. `/node_modules/xxx/index.d.ts`）
+
+任意のnpmモジュールのimportが型解釈が可能に！  
+
+> 詳細な仕様は[TypeScript handbook](https://www.typescriptlang.org/docs/handbook/module-resolution.html)や[DefinitelyTypedのREADME](https://github.com/DefinitelyTyped/DefinitelyTyped#how-do-i-get-them)を参照
+
+---
+
+## ハードコードして動かした図
+
+<video src="/assets/advanced-typescript-playground/monaco.dts.mp4" controls width="100%" muted autoPlay loop playsInline />
+
+---
+
+## TypeScript Compiler API
+## ＋AST解析で実現できそう :thinking_face:
+
+---
+
+## UNPKG
+
+https://unpkg.com  
+{package}@{version}/{path}→npm publishされたファイルの中身
+
+- かゆいところに手が届く機能いろいろ
+- CDNが手前にあるのでとても高速
+- CORSいける
+
+> &mdash; [CDN Links – React](https://reactjs.org/docs/cdn-links.html)
+
+---
+
+<CodeSurfer
+  title="Effective npm install in Browser PoC"
+  code={require("!raw-loader!./assets/advanced-typescript-playground/lib-npm-resolver.ts")}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    {
+      range: [56, 60],
+      notes: 'package.json取ってきてエントリポイントを導出',
+    },
+    {
+      range: [68, 72],
+      notes: 'Compiler APIを使ってSourceFile（≒AST）を得る',
+    },
+    {
+      range: [75, 77],
+      notes: 'Type reference(/// <reference...)は自動で解析してくれる',
+    },
+    {
+      range: [80, 80],
+      notes: 'import/exportは解析してくれないので自前でAST Treeを潜る',
+    },
+    {
+      range: [81, 83],
+      notes: 'import/exportだけ解釈する',
+    },
+    {
+      range: [90, 94],
+      notes: '相対パスならファイルパスを解決、そうじゃなければ再帰',
+    },
+    {
+      range: [62, 103],
+      notes: '外部ファイル、パッケージへの依存がなくなるまで繰り返し',
+    },
+  ]}
+/>
+
+---
+
+## 再帰インストール時のバージョン解決
+
+<img src="/assets/advanced-typescript-playground/2019-06-10-00-11-34.png" />
+
+package.jsonのsemverをそのままつければいい
+
+---
+
+<video src="/assets/advanced-typescript-playground/import-dts.mp4#t=8" controls height="1000" muted autoPlay loop playsInline />
+
+---
+
+## モジュール解決の実装しんどい...
+
+<img src="/assets/advanced-typescript-playground/2019-06-09-23-37-48.png" width="100%" />
+
+---
+
+## 無理に頑張らないほうが良さそう
+
+> [API for Retrieving Package Tarball · Issue #69 · unpkg/unpkg.com](https://github.com/unpkg/unpkg.com/issues/69)
+
+- unpkg.comではパッケージ内の全ファイル一覧を取れる  
+- 不要なファイルも取得するので遅いがパス解決不要  
+- AST解析不要でバグも少なそう
+
+ServiceWorker runtime cachingである程度効率化できる
+
+---
+
+## 他に使ってる技術
+
+- ブラウザでgzipかけてURLを圧縮・解凍
+- comlink-workerでのお手軽off the main thread
+
+---
+
+## 今後
+
+- Hooks 版 react-redux 使ってみよう
+- フィードバックもらって完成度あげたい
+- import のパスやパッケージ名の補完が効くように<br/>  
+  - 本家monaco-typescriptのCompletionProviderを改善したい
+- **公式 playground に還元したい**
+
+---
+
+## 得してほしい情報
+
+- monacoとTypeScriptの成熟によりブラウザエディタが（私の中で）アツい
+- ブラウザIDE的なことしたかったらUNPKGが便利
+- ちょっと複雑な型遊びがしたかったら、
+
+`https://playground.type-puzzle.org`
+
+---
+
+# Thanks
+
+`https://playground.type-puzzle.org`  
+※"react"ではなく"@types/react"のインストールが必要です  
+※TS製パッケージや.d.tsが配布されてるパッケージはそのまま名前でOK
+
+リポジトリ: [Leko/type-puzzle](https://github.com/Leko/type-puzzle/tree/master/packages/playground/)
