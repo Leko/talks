@@ -81,6 +81,16 @@ Node.js, React, React Native
 
 ---
 
+export default Split
+
+<img src="/assets/advanced-typescript-playground/usage.png" height="850" />
+
+## 使用例
+
+[live demo](https://playground.type-puzzle.org/?c=H4sIAAAAAAAAA81S224TMRD9FctSVZCSvaQNKduLepEKfQAqyBNsH9zdSeLGa1u2l7RE%2B%2B%2FMOEmrlEoIeOFhtfaZ8fE5Z7zklamBF1w21rjAPoOoQo8t2YVBQIMOrGMTZxpWcke1kh%2BWutThwQK7dsZ6dsyWpWZs6gCC1NOC%2BeDwf0hgmDnwM6Pqgum2uQWHaBcJKiW8Z2fWMrgPoGv%2FdONR5D1Z0aYpOxd4fJEaFi8VWpsggjR6Xfa0q1gNE9GqsKUJq1sadsXuGl6JiMt3xtS0fIGnYNfCBSnURtKad4u05KLkhBJnR7RHZGuTx3HJ34NSpuQsPcEO3uPBV0ZP5JQXS4y%2FsVKB%2B2TJkifozt%2FjQGLa2KzNVWOVrGQ40w%2B8CK6FHqeIq%2FCxVepiBtXcb%2BOXra6IbYx5PSudS11fCKVQoXrGRhbBhYcrLcmy%2FBFD3vQ8yRjP5CMp%2BA%2BmbhVc6QB4fAV3XY%2FXYHGooCtJCr4tuRYNPbNTmqFPN%2BYwCEtwRHH%2FHZyPl%2FL8TbKX5HucqHzlpF2J4eTpS9zTpCRpxdjYxLjV26UDIhDnIMsP%2Btl%2BfzAaZ8Ni722xnycHw%2BFX7FBSz2PU2jbYOQsBZ52mi8UiQeTOJziV1IpqLqaQ7uxnUd7O4HIlG%2B3Z9lZJPwNHJK0Ht7a38QGNkIr2vo%2BE%2FQifNrJyxptJIHpiwSYd8EPTMaO%2FJLrpei%2Fm26%2Bx%2BpuMs2T4xxGzV4%2F0r3%2BNO8%2FG%2BagYZkU2SIb56J%2Fjji7%2Bv8hvup9i4LlOOwUAAA%3D%3D)
+
+---
+
 ## 内部技術ピックアップ
 
 - monaco-editor 内部の TypeScript の LanguageService
@@ -154,90 +164,6 @@ export default Split
 
 ---
 
-<CodeSurfer
-  title="@typesのpackage.json: @types/lodash"
-  code={require("!raw-loader!./assets/advanced-typescript-playground/lodash-package.json.txt")}
-  lang="json"
-  showNumbers={false}
-  theme={vsDarkPlus}
-  dark
-  steps={[
-    {
-      range: [1, 4],
-      notes: 'package.jsonを見てみる'
-    },
-    {
-      range: [7, 8],
-      notes: 'index.d.tsを`node_modules/@types/lodash/index.d.ts`におけば良さそう'
-    },
-  ]}
-/>
-
----
-
-<CodeSurfer
-  title="@typesのindex.d.ts: @types/lodash"
-  code={require("!raw-loader!./assets/advanced-typescript-playground/lodash-index.d.ts.txt")}
-  lang="typescript"
-  showNumbers={false}
-  theme={vsDarkPlus}
-  dark
-  steps={[
-    {
-      lines: [14],
-      notes: 'node_modules/@types/lodash/common/common.d.tsに配置すれば良さそう'
-    }
-  ]}
-/>
-
----
-
-<CodeSurfer
-  title="TS製パッケージのpackage.json: typeorm"
-  code={require("!raw-loader!./assets/advanced-typescript-playground/typeorm-package.json.txt")}
-  lang="json"
-  showNumbers={false}
-  theme={vsDarkPlus}
-  dark
-  steps={[
-    {
-      range: [2, 4],
-      notes: 'package.jsonを見てみる'
-    },
-    {
-      range: [12, 12],
-      notes: '.jsを.d.tsに読み替えてindex.d.tsを見ればいい'
-    },
-  ]}
-/>
-
----
-
-<CodeSurfer
-  title="TS製パッケージのindex.d.ts: typeorm"
-  code={require("!raw-loader!./assets/advanced-typescript-playground/typeorm-index.d.ts.txt")}
-  lang="typescript"
-  showNumbers={false}
-  theme={vsDarkPlus}
-  dark
-  steps={[
-    {
-      lines: [3],
-      notes: '依存パッケージのimport：再帰で良さそう',
-    },
-    {
-      lines: [4],
-      notes: 'import ... from ...：fromの先を取得すれば良さそう',
-    },
-    {
-      lines: [17],
-      notes: 'export * from ...：これもfromを取得すれば良さそう',
-    },
-  ]}
-/>
-
----
-
 ## monaco に npm moduleの型を読ませる
 
 - 編集中のコードの仮想的なパスを指定（ex. `/index.tsx`）
@@ -256,11 +182,6 @@ export default Split
 
 ---
 
-## TypeScript Compiler API
-## ＋AST解析で実現できそう :thinking_face:
-
----
-
 ## UNPKG
 
 https://unpkg.com  
@@ -274,74 +195,40 @@ https://unpkg.com
 
 ---
 
-<CodeSurfer
-  title="Effective npm install in Browser PoC"
-  code={require("!raw-loader!./assets/advanced-typescript-playground/lib-npm-resolver.ts")}
-  lang="typescript"
-  showNumbers={false}
-  theme={vsDarkPlus}
-  dark
-  steps={[
-    {
-      range: [56, 60],
-      notes: 'package.json取ってきてエントリポイントを導出',
-    },
-    {
-      range: [68, 72],
-      notes: 'Compiler APIを使ってSourceFile（≒AST）を得る',
-    },
-    {
-      range: [75, 77],
-      notes: 'Type reference(/// <reference...)は自動で解析してくれる',
-    },
-    {
-      range: [80, 80],
-      notes: 'import/exportは解析してくれないので自前でAST Treeを潜る',
-    },
-    {
-      range: [81, 83],
-      notes: 'import/exportだけ解釈する',
-    },
-    {
-      range: [90, 94],
-      notes: '相対パスならファイルパスを解決、そうじゃなければ再帰',
-    },
-    {
-      range: [62, 103],
-      notes: '外部ファイル、パッケージへの依存がなくなるまで繰り返し',
-    },
-  ]}
-/>
-
----
-
-## 再帰インストール時のバージョン解決
-
-<img src="/assets/advanced-typescript-playground/2019-06-10-00-11-34.png" />
-
-package.jsonのsemverをそのままつければいい
-
----
-
-<video src="/assets/advanced-typescript-playground/import-dts.mp4#t=8" controls height="1000" muted autoPlay loop playsInline />
-
----
-
-## モジュール解決の実装しんどい...
-
-<img src="/assets/advanced-typescript-playground/2019-06-09-23-37-48.png" width="100%" />
-
----
-
-## 無理に頑張らないほうが良さそう
+## パッケージの中身の取得
 
 > [API for Retrieving Package Tarball · Issue #69 · unpkg/unpkg.com](https://github.com/unpkg/unpkg.com/issues/69)
 
 - unpkg.comではパッケージ内の全ファイル一覧を取れる  
 - 不要なファイルも取得するので遅いがパス解決不要  
-- AST解析不要でバグも少なそう
 
 ServiceWorker runtime cachingである程度効率化できる
+
+---
+
+## "依存pkgの依存pkg"のバージョン解決
+
+<img src="/assets/advanced-typescript-playground/2019-06-10-00-11-34.png" />
+
+UNPKGがsemverを解決してリダイレクトしてくれる
+
+- @types/react/
+  - index.d.ts
+  - node_modules/csstype/index.d.ts
+
+---
+
+## ServiceWorker runtime caching
+
+<img src="/assets/advanced-typescript-playground/workbox.png" />
+
+- :see_no_evil:: .../@types/react@~16.7.0/...
+- :see_no_evil:: .../@types/react@^16.7.0/...
+- :eyes:: .../@types/react@16.7.22/...
+
+---
+
+<video src="/assets/advanced-typescript-playground/import-dts.mp4#t=8" controls height="1000" muted autoPlay loop playsInline />
 
 ---
 
@@ -365,7 +252,7 @@ ServiceWorker runtime cachingである程度効率化できる
 ## 得してほしい情報
 
 - monacoとTypeScriptの成熟によりブラウザエディタが（私の中で）アツい
-- ブラウザIDE的なことしたかったらUNPKGが便利
+- UNPKGは開発用途で可能性感じる
 - ちょっと複雑な型遊びがしたかったら、
 
 `https://playground.type-puzzle.org`
