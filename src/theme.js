@@ -1,3 +1,4 @@
+import React from "react";
 import { future as theme } from "mdx-deck/themes";
 
 const fontFamily =
@@ -8,6 +9,11 @@ const header = {
 
 export default {
   ...theme,
+  components: {
+    strong: props => (
+      <strong {...props} style={{ borderBottom: "6px solid #3E8A5F" }} />
+    )
+  },
   colors: {
     ...theme.colors,
     background: "#002C2B"
@@ -35,6 +41,9 @@ export default {
   },
   i: {
     fontSize: "24px"
+  },
+  ul: {
+    paddingInlineStart: 60
   }
   // FIXME: liの階層ごとに小さくしたい。。。
   // "li>li": {
