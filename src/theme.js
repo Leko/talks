@@ -1,5 +1,6 @@
 import React from "react";
 import { future as theme } from "mdx-deck/themes";
+import { Code } from './Code'
 
 const fontFamily =
   'Roboto, sans-serif, "Noto Sans Japanese", "YuGothic", "Yu Gothic"';
@@ -12,7 +13,8 @@ export default {
   components: {
     strong: props => (
       <strong {...props} style={{ borderBottom: "6px solid #3E8A5F" }} />
-    )
+    ),
+    code: Code
   },
   colors: {
     ...theme.colors,
