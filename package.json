@@ -29,5 +29,8 @@
     "raw-loader": "^0.5.1",
     "rimraf": "^2.6.2",
     "scaffdog": "0.0.7"
+  },
+  "dependencies": {
+    "react-syntax-highlighter": "^9.0.1"
   }
 }

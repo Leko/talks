@@ -1,0 +1,588 @@
+import { Head, Notes } from "mdx-deck";
+import { syntaxHighlighterPrism } from "mdx-deck/themes";
+import { Split, Horizontal } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+import { Script } from "./Script";
+import { Code } from "./Code";
+import { FullWidth } from "./FullWidth";
+
+export { default as theme } from "./theme";
+export const themes = [syntaxHighlighterPrism]
+
+<Head>
+  <Meta
+    title={`"型パズル"という文化`}
+    description="TypeScript meetup #1"
+    slug="type-puzzle-world"
+    publishedAt={new Date(2019, 5, 18)}
+  />
+  <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+</Head>
+
+# "型パズル"という文化
+
+[TypeScript meetup #1](https://typescript-jp.connpass.com/event/127747/)  
+Leko
+
+---
+
+## Leko (@L_e_k_o)
+
+<img src="/assets/self_avatar.png" height="360" />
+<img src="/assets/self_bio.png" height="360" />
+<img src="/assets/self_contributions.png" height="360" />
+
+TypeScript, Node.js, React, React Native  
+アプリ、ブラウザ、サーバぜんぶTS
+
+言語の中身読んだり AST 解析で遊ぶのが好き
+
+---
+
+## TypeScript歴は１年弱くらい
+
+<img src="/assets/type-puzzle-world/2019-06-14-01-26-39.png" width="100%" />
+
+---
+
+<img src="/assets/type-puzzle-world/2019-06-14-02-02-29.png" width="100%" />
+
+> &mdash; [TypeScript, CoffeeScript, Flowtype, Node.js - Explore - Google Trends](https://trends.google.com/trends/explore?date=2012-01-01%202019-06-14&q=TypeScript,CoffeeScript,Flowtype,Node.js)
+
+<Notes>Google Trends</Notes>
+
+---
+
+<img src="/assets/type-puzzle-world/2019-06-14-01-43-12.png" width="100%" />
+
+<Notes>npmcharts</Notes>
+
+---
+
+<img src="/assets/type-puzzle-world/2019-06-14-02-20-06.png" width="100%" />
+
+> &mdash; [The State of JavaScript 2018: JavaScript Flavors - TypeScript](https://2018.stateofjs.com/javascript-flavors/typescript/)
+
+<Notes>State of JS: popularity over time</Notes>
+
+---
+
+<img src="/assets/type-puzzle-world/2019-06-14-02-20-54.png" width="100%" />
+
+> &mdash; [The State of JavaScript 2018: JavaScript Flavors - TypeScript](https://2018.stateofjs.com/javascript-flavors/typescript/)
+
+<Notes>State of JS: Most Disliked Aspects of TypeScript</Notes>
+
+---
+
+export default Horizontal
+
+<img src="/assets/type-puzzle-world/2019-06-14-03-29-38.png" width="100%" />
+<img src="/assets/type-puzzle-world/2019-06-14-03-29-28.png" width="100%" />
+<img src="/assets/type-puzzle-world/2019-06-14-03-29-11.png" width="100%" />
+
+---
+
+## 本日話すこと
+
+- "型パズル"とは何か
+- なぜ人は型をパズルしてしまうのか
+- 型パズルのエッセンス
+- 面白かった型パズルのピックアップ
+
+---
+
+## まえおき
+- :x: Compiler API、Language Service
+- :x: 難解な型パズルを出題して型マウント取る話
+- :x: 全TSerが型パズルするべきだ
+- :ok_woman: 型パズルと聞いて身構える方に身近に感じてもらいたい
+
+<Notes>私の経験値の偏りでreduxやexpressの例示が多いが、別にライブラリやフレームワークの話をしたいわけではない</Notes>
+
+---
+
+<img src="/assets/type-puzzle-world/2019-06-14-00-33-20.png" width="80%" />
+
+[TypeScript and Immutability - TypeScriptでImmutableなエンティティを表現する方法あれこれ](https://speakerdeck.com/brn/typescript-and-immutability?slide=18)
+
+<Notes>2018/11の記事</Notes>
+
+---
+
+## どっちが思考コストが高いか
+HTTPメソッド
+
+<Code language="ts">
+{`
+// ちゃんと渡せばOK
+const httpMethod: string = 'GET'
+// 正しくない値を渡してもエラーになってくれない
+const httpMethod: string = 'hogehoge'
+`.trim()}
+</Code>
+
+<Code language="ts">
+{`
+type HTTPMethod = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE' // ...
+// ちゃんと渡せばOK
+const httpMethod: HTTPMethod = 'GET'
+// 正しくない値を渡すと型エラー
+const httpMethod: HTTPMethod = 'x'
+`.trim()}
+</Code>
+
+---
+
+## 思考コスト
+
+- 書き手：この変数（型）に何代入すれば良いんだ？
+- 読み手：この書き方であってるのか？
+
+---
+
+<FullWidth>
+
+## どっち略？
+オブジェクトのゲッター
+
+<div style={{display:'flex'}}>
+<div style={{flex:1,padding:10}}>
+<Code language="ts">
+{`
+const obj = {
+  a: 'x',
+  b: 'y',
+  c: 'z',
+}
+function get(
+  obj: { [key: string]: string },
+  key: string
+) {
+  return obj[key]
+}
+get(obj, 'a') // OK
+get(obj, 'x') // NG(no error!!)
+`.trim()}
+</Code>
+</div>
+<div style={{flex:1,padding:10}}>
+<Code language="ts">
+{`
+const obj = {
+  a: 'x',
+  b: 'y',
+  c: 'z',
+}
+function get<T extends {}, K extends keyof T>(
+  obj: T,
+  key: K
+) {
+  return obj[key]
+}
+get(obj, 'a') // OK
+get(obj, 'x') // NG(error)
+`.trim()}
+</Code>
+</div>
+</div>
+
+</FullWidth>
+
+---
+
+<img src="/assets/type-puzzle-world/2019-06-16-23-11-22.png" />
+
+---
+
+## Union typeに推論されるメリット
+
+- 書き手の思考コストを削れる（大文字？小文字？ etc）
+- より**事実に近い**
+- 実行しなくても**型レベルで確かめられる**ことが増えている
+- **補完が効く**。開発体験がいい。バグが減る
+
+---
+
+## なぜ型をパズルするのか？
+
+- 日々かかる思考コストを削減したい
+- コードの意図の通りに推論させたい
+- **型で落ちたらバグっている、型が通ればバグってない**にしたい
+- **型推論のためだけに書くコード**を減らしたい
+- 補完が効くしあわせになりたい
+
+---
+
+## 型の門を叩く
+
+これらの公式ドキュメントを読むとイメージが湧くかも
+
+- [Advanced Types · TypeScript](https://www.typescriptlang.org/docs/handbook/advanced-types.html)
+- [TypeScript 2.8 · TypeScript](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html)
+
+入門してた頃の私的バイブル
+
+- [TypeScript 2.8 の Conditional Types について - Qiita](https://qiita.com/Quramy/items/b45711789605ef9f96de)
+- [TypeScript 3.1 の Mapped Tuple Typeについて - Qiita](https://qiita.com/Quramy/items/c596b1bacf591da545b2)
+
+---
+
+## コスパの悪い型定義
+
+疲弊を招く、費用対が悪い
+
+<Code language="ts">
+{`
+const user = {
+  name: 'Leko',
+  age: 27
+}
+type UserKeys = 'name' | 'age'
+`.trim()}
+</Code>
+
+---
+
+## 手を抜けるところは抜く
+
+型定義と事実が乖離しないようにすると楽
+
+<Code language="ts">
+{`
+const user = {
+  name: 'Leko',
+  age: 27
+}
+type UserKeys = keyof typeof user // 'name | 'age'
+`.trim()}
+</Code>
+
+---
+
+export default FullWidth
+
+## 手を抜きすぎ
+
+`typeof`が適切ではないケースはたくさんある  
+
+<div style={{display:'flex'}}>
+<div style={{flex:1,padding:10}}>
+<Code language="ts">
+{`
+const initialState = {
+  fetching: false,
+  user: null
+}
+type State = typeof initialState
+// 期待通りに推論されない
+export function userReducer(
+  state: State,
+  action: ...
+) {
+  switch (action.type) {
+    // ...
+  }
+}
+`.trim()}
+</Code>
+</div>
+<div style={{flex:1,padding:10}}>
+<Code language="ts">
+{`
+// 意図はこう
+type User = { ... }
+type State = {
+  fetching: boolean,
+  user: User | null
+}
+`.trim()}
+</Code>
+</div>
+</div>
+
+---
+
+## 強気すぎる型
+ex. HTTPリクエストのハンドラ  
+事実と乖離してる。型エラーは起きないが実行時エラー  
+[試す](https://playground.type-puzzle.org?c=H4sIAAAAAAAAA81SXW%2FUMBD8K5ZFpRxKnA%2FSO5SqUAkV8UYljhdIpbrJ5s5tYhvbx%2FUU5b%2Bzdu%2Fg2gck4IWHRNrZ2ZndSUbaqBZoRcWglXHkJeGWwIM2YC3pjBpITfdlTc9qeUy7Ve3uihsL5sD0SKIDFNi1dDsN5LPWYC6btbriu17xlpyTsZaESD7A24pYZ4RcIX0KI42S1hGuNdL21tEMO4iwjYXoly27s0pGs1kY8%2B0VuKim6cb7JYCGNY1JZOBbTFBmRs7fPBo%2FWoxhATKhD1KY1%2FVnPd%2F2zE%2FgOLMg2%2BjmA%2FS9ismL0Q8zpwL9HcfFZtONX2XyLxpTZ9GmEytajRjyoEUP5qN2Ar095K9uHK2c2cA0xbQFjfogGwHY%2FzpSr48f5sJHaNN9EqiLsto3Ao71dzAWRREpWZ6znHot2xgRvBBeIvFTqEkLnZAi7EA6ZcjlT9WWOy9aZPnrJCuSLF8WRVXMq1dztljkX5DRC3kfNpd6QObaOW2rNN1utwyRO8vwyFTz5p6vID0ps7DfSfH%2BsDneqDe3vbBrMF4Gv6XZ33g4BQYuel%2FbBCWTAF8MojHKqs55A6%2BCJOnwwbtDUH8pdD3Fz0M%2B%2Bn9%2FGzSmvGDZnwT9VPlJ2GVSnC6zrCpOq7Jg5WL%2BL2Ef%2B%2Fx%2FgV9PPwDyjLTpcAQAAA%3D%3D)
+
+<Code language="ts">
+{`
+type UpperEchoPayload = {
+  name: string
+}
+const app = express()
+// ここ
+app.get('/upper-echo', (req, res) => {
+  const { name } = req.body as UpperEchoPayload
+  res.send(\`Hello, \${name.toUpperCase()}\`)
+})
+`.trim()}
+</Code>
+
+---
+
+## as const + ReturnType
+
+reduxのaction creatorとか。  
+`as const`がないと推論結果が`string`になっちゃう
+
+<Code language="ts">
+{`
+const addUser = (user: User) => ({
+  type: 'user/add' as const,
+  user,
+})
+type AddUserAction = ReturnType<typeof addUser>
+//
+// いちいちこう書かなくていい
+type AddUserAction = {
+  type: 'user/add',
+  user: User,
+}
+`.trim()}
+</Code>
+
+---
+
+export default Split
+
+<div>
+
+<img src="/assets/type-puzzle-world/2019-06-14-01-00-38.png" width="100%" />
+
+> &mdash; [書いて覚える Utility Types](https://slides.yamatatsu193.net/typescript/0)
+
+</div>
+<div>
+
+<img src="/assets/type-puzzle-world/2019-06-14-01-01-39.png" width="100%" />
+
+> &mdash; [Advanced built-in types / #kansaits 1 - Speaker Deck](https://speakerdeck.com/masashi/number-kansaits-1)
+
+</div>
+
+---
+
+## 自分では書かないアプローチ
+
+型だけを提供するTSのためのnpmパッケージ登場  
+TSのbuild-in typeもかなり充実しており、これだけでも足りてることは多い
+
+あくまでユーティリティであり**要件を叶える型とは限らない**
+
+> &mdash; [sindresorhus/type-fest: A collection of essential TypeScript types](https://github.com/sindresorhus/type-fest)  
+> &mdash; [Announcing TypeScript 3.5 | TypeScript](https://devblogs.microsoft.com/typescript/announcing-typescript-3-5/#the-omit-helper-type)
+
+---
+
+## コスパのいい型定義
+
+- 型の効用を維持するコストが低い
+- 型検査と実行結果の乖離が少ない
+
+---
+
+## 複雑な型を噛み砕く
+
+- Mapped type
+- Conditional type + infer
+- 再帰型
+- Brand type、幽霊型
+- User defined type guard
+- Overload祭り
+- etc...
+
+全部は時間が足りず話しきれない
+
+---
+
+## Unionが絞れてない
+
+実行時には安全なのだが、型検査上は安全ではない
+
+<Code language="ts">
+{`
+type VerifiedUser = {
+  emailVerified: true,
+  profile: UserProfile,
+}
+type UnverifiedUser = {
+  emailVerified: false
+}
+type User = VerifiedUser | UnverifiedUser
+const users: User[] = [...]
+// メール確認済みユーザだけなんか処理したい
+users
+  .filter(user => user.emailVerified)
+  .map(user => user.profile)
+  // Property 'profile' does not exist on type 'User'.
+  //   Property 'profile' does not exist on type 'UnverifiedUser'.
+`.trim()}
+</Code>
+
+---
+
+## User defined type guard
+
+<Code language="ts">
+{`
+function isEmailVerifieid (obj: unknown): obj is VerifiedUser {
+  return obj.emailVerified
+}
+const users: User[] = [...]
+// やってることは同じ、type guard付けた関数に分けただけ
+users
+  .filter(isEmailVerifieid)
+  .map(user => user.profile) // エラーにならない！
+`.trim()}
+</Code>
+
+---
+
+## hasなどのチェック用メソッド
+
+<Code language="ts">
+{`
+const map = new Map<string, number>([...])
+// hasでチェックしてるのにgetの結果が | undefinedになっちゃう
+if (map.has('a')) {
+  const item =  map.get('a')
+  item.toFixed() // ERROR
+  // Object is possibly 'undefined'.
+}
+`.trim()}
+</Code>
+
+---
+
+## やりようはあるけど
+
+- thisもtype guardが使える`has(...): this is ...`
+- でもhas捨てる方が楽で型と実行時の乖離が少ないと思う
+
+<Code language="ts">
+{`
+const map = new Map<string, number>([...])
+const item = map.get('x')
+if (typeof item !== 'undefined') {
+  item.toFixed()
+}
+`.trim()}
+</Code>
+
+---
+
+export default FullWidth
+
+## Mapped type
+カテゴリに対応する文言とアイコン画像
+
+<Code language="ts">
+{`
+export type Category = 'food' | 'drink'
+// ----------------------
+import { Category } from './Category'
+const categoryNames: { [K in Category]: string } = {
+  food: '食べ物',
+  drink: '飲み物',
+}
+// ----------------------
+import { Category } from './Category'
+import iconFood from './icons/category/food.png'
+import iconDrink from './icons/category/drink.png'
+const categoryIcons: { [K in Category]: string } = {
+  food: iconFood,
+  drink: iconDrink,
+}
+`.trim()}
+</Code>
+
+---
+
+## Union + Mapped type
+
+- 防げる：カテゴリだけ増やして画像や文言定義してない
+- 防げる：文言は足したけど画像が抜けてる（または逆
+- 防げる：キー名であるカテゴリをタイポした
+- カテゴリ名の補完が効く
+
+---
+
+export default FullWidth
+
+## Replace mapped type with Record
+build-inのRecordで書いても似たような結果が得られる
+
+<Code language="ts">
+{`
+export type Category = 'food' | 'drink'
+// ----------------------
+import { Category } from './Category'
+const categoryNames: Record<Category, string> = {
+  food: '食べ物',
+  drink: '飲み物',
+  xxx: 'hoge', // ERROR(余計なプロパティ)
+}
+// ----------------------
+import { Category } from './Category'
+import iconFood from './icons/category/food.png'
+import iconDrink from './icons/category/drink.png'
+const categoryIcons: Record<Category, string> = {
+  food: iconFood,
+  // drink: iconDrink, // ERROR(プロパティが足りない)
+}
+`.trim()}
+</Code>
+
+---
+
+## ミニマムから噛み砕いてあとは慣れる
+
+- 型を強くしたら何が防げるようになるのか？を意識
+- 小さく書いて納得する
+- 最小の例を理解できたら、組み合わさってるものを分解して理解
+- 型書いてる人も小さい状態からだんだん太らせてる（と思う
+
+---
+
+## 型のハードルを下げたい
+
+- 型コミッターが増える（@typesや本家のlibなど）
+- 多くの標準API・ライブラリが適切に型付けされる
+- それが高いレベルで維持されやすくなる
+- ユーザ離れを起こしにくくなる
+- **TypeScriptが便利になる、育つ、死ににくくなる**
+
+※ユーザ人口とコミュニティにフォーカスした場合
+
+---
+
+# Conclusion
+
+- コードの意図通りに推論させるためにいい型定義を生み出す
+- コスパのいいTypeScript
+- 型に詳しくなるならドキュメントよりリリースノート読むほうが良いと思う
+
+---
+
+# Thanks
+
+@L_e_k_o
+
+---
+
+# References
+
+- [TypeScript 2.8 · TypeScript](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html)
+- [Advanced Types · TypeScript](https://www.typescriptlang.org/docs/handbook/advanced-types.html)
+- [TypeScript 2.8.1 変更点 - Qiita](https://qiita.com/vvakame/items/2e32aeded05997f77dfa)
+- [TypeScript 2.1のkeyofとかMapped typesがアツい - Qiita](https://qiita.com/Quramy/items/e27a7756170d06bef22a)
+- [TypeScript 2.8 の Conditional Types について - Qiita](https://qiita.com/Quramy/items/b45711789605ef9f96de)
+- [TypeScript 3.1 の Mapped Tuple Typeについて - Qiita](https://qiita.com/Quramy/items/c596b1bacf591da545b2)
+- [TypeScriptで最低n個の要素を持った配列の型を宣言する方法 - Qiita](https://qiita.com/uhyo/items/80ce7c00f413c1d1be56)
+- [TypeScriptの行く先 - Qiita](https://qiita.com/vvakame/items/bf4d1e339d5815026fbb)
