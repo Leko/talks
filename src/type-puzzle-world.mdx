@@ -13,7 +13,7 @@ export const themes = [syntaxHighlighterPrism]
 
 <Head>
   <Meta
-    title={`"型パズル"という文化`}
+    title={`"型パズル"との付き合い方`}
     description="TypeScript meetup #1"
     slug="type-puzzle-world"
     publishedAt={new Date(2019, 5, 18)}
@@ -21,7 +21,7 @@ export const themes = [syntaxHighlighterPrism]
   <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
 </Head>
 
-# "型パズル"という文化
+# "型パズル"との付き合い方
 
 [TypeScript meetup #1](https://typescript-jp.connpass.com/event/127747/)  
 Leko
@@ -91,6 +91,7 @@ export default Horizontal
 - なぜ人は型をパズルしてしまうのか
 - 型パズルのエッセンス
 - 面白かった型パズルのピックアップ
+- 私の型パズルとの向き合い方
 
 ---
 
@@ -550,6 +551,17 @@ const categoryIcons: Record<Category, string> = {
 
 ---
 
+## 私の型パズルとの向き合い方
+
+- 日々かかる**思考コストを削減**できる型定義をする
+- **型検査と実行時の乖離を減らす**ために型の知識を増やしてる
+- **型推論のためだけに書くコード**を減らす
+- たまにConditional typeたっぷりな型書くが頻出するものではない
+  - メンテしんどいぶんのメリットがある型を書く
+- クイズ感覚で解く型パズルは楽しい、解けると脳汁出る
+
+---
+
 ## 型のハードルを下げたい
 
 - 型コミッターが増える（@typesや本家のlibなど）
@@ -564,7 +576,6 @@ const categoryIcons: Record<Category, string> = {
 
 # Conclusion
 
-- コードの意図通りに推論させるためにいい型定義を生み出す
 - コスパのいいTypeScript
 - 型に詳しくなるならドキュメントよりリリースノート読むほうが良いと思う
 
@@ -585,4 +596,4 @@ const categoryIcons: Record<Category, string> = {
 - [TypeScript 2.8 の Conditional Types について - Qiita](https://qiita.com/Quramy/items/b45711789605ef9f96de)
 - [TypeScript 3.1 の Mapped Tuple Typeについて - Qiita](https://qiita.com/Quramy/items/c596b1bacf591da545b2)
 - [TypeScriptで最低n個の要素を持った配列の型を宣言する方法 - Qiita](https://qiita.com/uhyo/items/80ce7c00f413c1d1be56)
-- [TypeScriptの行く先 - Qiita](https://qiita.com/vvakame/items/bf4d1e339d5815026fbb)
+- [TypeScriptの型入門 - Qiita](https://qiita.com/uhyo/items/e2fdef2d3236b9bfe74a)

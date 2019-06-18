@@ -11,6 +11,7 @@ export function Code(props) {
       language={language}
       style={dracula}
       customStyle={{
+        fontSize: 28,
         textAlign: 'left',
         flex: 1,
         marginTop: 0,
