@@ -1,0 +1,263 @@
+import { Head, Notes } from "mdx-deck";
+import { syntaxHighlighterPrism } from "mdx-deck/themes";
+import { Split, Horizontal } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+import { Script } from "./Script";
+import { Code } from "./Code";
+import { FullWidth } from "./FullWidth";
+
+export { default as theme } from "./theme";
+export const themes = [syntaxHighlighterPrism]
+
+<Head>
+  <Meta
+    title="Expo side React SSR"
+    description="React Tokyo Plus"
+    slug="expo-side-react-ssr"
+    publishedAt={new Date(2019, 5, 26)}
+  />
+  <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+</Head>
+
+# Expo side React SSR
+
+[React Tokyo Plus](https://www.meetup.com/ReactJS-Tokyo/events/262199021/)  
+Leko
+
+---
+
+## i18n
+
+- Talk slides are written in English (as far as possible)
+- Some screen shots include Japanese
+- I'll speak in Japanese
+
+---
+
+## About me
+Leko (@L_e_k_o)
+
+<img src="/assets/self_avatar.png" height="360" />
+<img src="/assets/self_bio.png" height="360" />
+<img src="/assets/self_contributions.png" height="360" />
+
+Chief Engineer at CureApp, Inc.  
+I love TypeScript, Node.js, React, React Native(Expo)  
+
+---
+
+## Agenda
+
+Use [React SSR](https://reactjs.org/docs/react-dom-server.html) in Expo to generate PDF with web technologies
+
+---
+
+## Server side rendering (SSR)
+
+- Reduce TTI([Time to Interactive](https://developers.google.com/web/tools/lighthouse/audits/time-to-interactive))
+- For OGP (`og:image`, `og:title` etc)
+- Crawler friendly ※
+
+> &mdash; [Google's web crawler Googlebot now runs on the latest version of Chromium: Why that's a good thing - Search Engine Land](https://searchengineland.com/google-will-ensure-googlebot-runs-the-latest-version-of-chromium-316534#targetText=Googlebot%20will%20now%20be%20%E2%80%9Cevergreen,Chromium%20rendering%20engine%20version%2074.)
+
+---
+
+## How to use React SSR
+
+```jsx
+import React from 'react'
+import { renderToString } from 'react-dom/server'
+
+const App = () => (
+  <div>Hello, world!</div>
+)
+
+const html: string = renderToString(<App />)
+// => '<div data-reactroot="">Hello, world!</div>'
+console.log(html)
+```
+
+> &mdash; [ReactDOMServer – React](https://reactjs.org/docs/react-dom-server.html)
+
+---
+
+## Expo
+
+- React Native（以下RN）で動作するツール/ライブラリ
+- 素のRNにはない便利なAPI/Componentが多数ある
+- ネイティブモジュールの面倒を見なくていい ※
+- 最近web対応が進んでいる
+
+※Managed workflowの場合
+
+---
+
+## What is Expo side React SSR? :thinking_face:
+
+<Notes>
+- 最近Expoがweb対応したから？
+- パフォーマンス改善？
+</Notes>
+
+---
+
+export default Split
+
+<div>
+  <img src="/assets/expo-side-react-ssr/2019-06-18-01-07-27.png" width="50%" />
+  <img src="/assets/expo-side-react-ssr/2019-06-18-01-07-58.png" width="50%" />
+</div>
+
+## Clay target shooting
+
+- ありとあらゆる手続きが紙と電話
+- 使用履歴の詳細、残弾の管理帳簿を毎年紙で提出
+
+---
+
+<img src="/assets/expo-side-react-ssr/2019-06-18-01-15-06.png" width="70%" />
+
+> &mdash; [3タイプの実包等管理帳簿の管理方法から、自分に合った方法を見つける | 山のクジラを獲りたくて](https://yamanokujira.com/2017/05/01/how_to_mange_a_shot/)
+
+---
+
+## アプリ作って解決しよう
+
+- 使ったその場でアプリに入力
+- 検査前に記入した結果を書式に沿ってPDF化
+- 印刷して提出
+- ~~:x: Spreadsheet/Excelでいいじゃん~~
+
+<Notes>
+- 前職：ECのバックヤードサービス。送り状や納品書などPDF作りまくってた
+- 現職：JavaScriptエンジニア（主にReact, RN）
+
+シナジーあるでこれ
+</Notes>
+
+---
+
+## PDF generation in JavaScript
+
+---
+
+## PDF generation on AWS Lambda
+
+---
+
+## 開発体験よくない
+
+リロード遅い
+
+---
+
+## webの技術を使えないか？
+
+- webpackとか
+- ReactとかCSSとか
+- PDF生成界隈において当たり前なのか、禁忌なのかわからない
+
+---
+
+## A4サイズにしたい
+
+paper.css
+
+---
+
+## 帳票自体はできた
+
+TODO: ブラウザで帳票を開発してる様子が分かるスクショ
+
+---
+
+## 仕組み
+
+- データを渡してrenderToString
+- html文字列をPrint APIに食わせる
+- 生成されたバイナリをShare APIに食わせる
+
+---
+
+## SSR部分のコード
+
+- hiroppyさんのSSR sample参考にさせてもらった
+
+---
+
+## Expoの中でSSRを動かす
+
+`react-dom/server`はUniversal
+ブラウザでも動くし、当然Expo（iOSならJavaScriptCore）でも動く
+
+---
+
+## 悪魔合体
+
+React NativeのコードとReact DOMのコードが入り交じる様
+
+---
+
+## HTMLをPDFにできないか？
+
+Print APIがExpoにあった
+
+---
+
+## 生成できたPDFにどうアクセスする？
+
+Share APIがExpoにあった  
+Webでも最近Web Share APIが出たね
+
+---
+
+## 動かした様子
+
+TODO: 動画
+
+---
+
+## 今年の検査で使ってみた
+
+- 別紙にメモっておいた記録をアプリに入力し直し
+- PDFをコンビニでプリントして提出
+- 検査通った :tada::tada::tada:
+
+来年以降どうなるかは不明（明確なルールがないため人による）
+
+---
+
+## 振り返って
+
+- デバッグ効率が半端なく上がる
+- 使い慣れた技術が使えるので素早く作れる
+- 印刷用のサイズ指定やレイアウトはpaper.cssに任せる
+- ブラウザでも似たようなことができそう？
+  - data URI + componentDidMount + window.print
+
+---
+
+## Expo side SSR & web帳票の可能性
+
+転用できる可能性はかなりある
+
+- 契約（クラウドサインとか）
+- 会計（freeeとか）
+- 行政手続き
+- その他特定書式のPDFや紙が必要な界隈
+
+---
+
+# Conclusion
+
+- Expoだけで帳票のような複雑なPDFが生成できる
+- React+CSSで帳票が作れる幸せ。座標の管理しなくていい...!!
+- PDF生成のためのインフラ、リソースに気を使わなくてよい
+
+---
+
+# Thanks
+
+@L_e_k_o
