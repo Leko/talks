@@ -1,0 +1,361 @@
+import { Head, Notes } from "mdx-deck";
+import { syntaxHighlighterPrism } from "mdx-deck/themes";
+import { Split, Horizontal } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+import { Script } from "./Script";
+import { Code } from "./Code";
+import { FullWidth } from "./FullWidth";
+
+export { default as theme } from "./theme";
+export const themes = [syntaxHighlighterPrism]
+
+<Head>
+  <Meta
+    title="CircleCIのartifactsを使い倒す"
+    description="CircleCI ユーザーコミュニティミートアップ #5"
+    slug="expo-side-react-ssr"
+    publishedAt={new Date(2019, 5, 26)}
+  />
+  <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+</Head>
+
+# CircleCIのartifactsを使い倒す
+
+[CircleCI ユーザーコミュニティミートアップ #5](https://circleci.connpass.com/event/134440/)  
+Leko
+
+---
+
+## About me
+
+<img src="/assets/self_avatar.png" height="360" />
+<img src="/assets/self_bio.png" height="360" />
+<img src="/assets/self_contributions.png" height="360" />
+
+I love TypeScript, Node.js, React, React Native(Expo)  
+
+---
+
+## Agenda
+
+- CirlceCIのArtifactsを軽く紹介
+- Artifactsを活用し、コードレビューを省力化、改善する
+
+---
+
+## CirlceCI Artifacts
+
+<img src="/assets/circleci-artifacts/2019-06-19-20-50-47.png" width="100%" />
+
+---
+
+## Artifactsに登録するstep
+
+ビルトインの`store_artifacts`
+
+```yml
+version: 2
+jobs:
+  base: &base
+    docker:
+      - image: circleci/node:latest
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - store_artifacts:
+          path: coverage
+```
+
+---
+
+## Artifacts一覧を取得する
+
+今日の方々が主に何（言語）を書くかわからないのでcurlで
+
+```sh
+ENDPOINT='https://circleci.com/api/v1.1/project/:vcs-type/:username/:project'
+curl "$ENDPOINT/:build_num/artifacts?circle-token=:token"
+```
+
+```json
+[
+  {
+    "path" : "raw-test-output/go-test-report.xml",
+    "pretty_path" : "raw-test-output/go-test-report.xml",
+    "node_index" : 0,
+    "url" : "https://24-88881093-gh.circle-artifacts.com/0/raw-test-output/go-test-report.xml"
+  },
+  ...
+]
+```
+
+> &mdash; [Artifacts Of A Build – CircleCI API Reference](https://circleci.com/docs/api/#artifacts-of-a-build)
+
+---
+
+## Artifactsを１ファイル取得する
+
+```sh
+curl '{{artifactsのURL}}?circle-token=:token'
+```
+
+> &mdash; [Download an artifact file – CircleCI API Reference](https://circleci.com/docs/api/#download-an-artifact-file)
+
+---
+
+# ArtifactsのURLをプルリクにコメントしてレビュー効率化
+
+---
+
+## 動作確認しているもの
+
+- Storybook
+  - コンポーネントカタログ、UIパーツ集
+  - 「このpropならこういう表示になる」を定義し簡単に再現
+- ステージング版アプリ
+  - ReactをつかったSPA、Webpackでbundle
+  - 自動テストやStorybookでカバーできない結合テスト（人力
+
+---
+
+## PRの動作確認の効率を上げたい
+
+1. ローカルでPRブランチにcheckout
+1. bundle
+1. ローカルでサーバ起動、動作確認
+
+stash事故、作業のキリが良くないと心理的ハードルが高い...  
+**素早く**、**気軽に**、**有益な**コードレビューをしたい
+
+---
+
+## Artifactsで実現する
+
+- CIでSPAをビルドしArtifactsに保存
+- ArtifactsのURLをAPIから取得
+- GitHub APIを用いてURLをコメント
+
+---
+
+## 動かした図
+
+<img src="/assets/circleci-artifacts/2019-06-19-21-10-07.png" width="100%" />
+
+<Notes>他にもテストカバレッジのレポートとかも良さそう</Notes>
+
+---
+
+## めっちゃ楽
+
+- 心理的コストの削減
+  - コメントされたURLを開くだけ（
+  - ローカルのキリが悪くてもいつでも見れる
+- 時間の削減
+  - CIでビルドしてる間別のことできる
+  - ローカルでビルド待ちしなくていい
+
+---
+
+## CircleCIのartifactsのアクセス制限
+
+※private repositoryの場合
+
+- CircleCIにログインしている
+- リポジトリに対してRead権限があるとアクセス可能
+
+リポジトリのCollaboratorだけ管理する  
+S3等において**アクセス制限の二重管理しない**
+
+---
+
+## ArtifactsをPRにコメントするOSS
+
+オレオレシェルだったものをOSS化してくれたもの
+
+> &mdash; [Naturalclar/klank: Tool to notify circleci artifact to pull requests and/or slack channel](https://github.com/Naturalclar/klank)
+
+---
+
+## カバレッジのdiffを比較する
+
+<Notes>SaaSがいろいろある</Notes>
+
+---
+
+export default Split
+
+<div>
+<h2>カバレッジの詳細</h2>
+
+これもPRにコメントできる、が
+
+https://coverage.nodejs.org
+</div>
+
+<img src="/assets/circleci-artifacts/2019-06-24-01-08-32.png" width="100%" />
+
+<img src="/assets/circleci-artifacts/2019-06-24-01-10-09.png" width="100%" />
+
+---
+
+## カバレッジレポートは点だけだと足りない
+
+- 今のmasterはいくつなんだっけ？
+- **このPRによってカバレッジ減ったのか増えたのか？**
+
+テストコード読めば分かるけど、人間じゃなくても分かる  
+<small>※カバレッジだけが全てではないが、維持すべき重要な指標の１つ</small>
+
+---
+
+# Artifactsで前後比較する
+
+- APIでmasterブランチの最新ビルドを取得
+- APIでそのビルドからArtifacts一覧を取得
+- Artifactsからカバレッジレポートを取得
+- テストを実行しカバレッジ計測
+- 現在とArtifactsのカバレッジレポートを比較
+- 比較結果をGitHubにコメント
+
+---
+
+## 例えばこんな感じ
+
+コメントの書式は[codecov](https://codecov.io)というサービスを真似た
+
+<img src="/assets/circleci-artifacts/2019-06-19-21-51-36.png" />
+
+---
+
+# coverage-diff-back
+
+- 作った
+- monorepoにも対応
+- JS向け。lcovのJSONなら他言語でも使えるかも
+
+> &mdash; [Leko/coverage-diff-back: Send the coverage difference back to the github on each pull requests](https://github.com/Leko/coverage-diff-back)
+
+
+---
+
+# ビジュアルリグレッションテスト
+
+---
+
+## storybookで目検する限界
+
+- 直接影響のあるところだけ動作確認するのは容易
+- スタイル修正したときにデグレってないか影響範囲を目検...？
+  - コンポーネント数十個、更にストーリーが4-5個  
+  - 500パターン全部をPRのたびに全部チェック？
+- じゃあ確認しきるのを諦める？
+
+無理 :sob:
+
+---
+
+<img src="/assets/circleci-artifacts/2019-06-24-00-21-26.png" />
+
+> &mdash; [reg-viz/reg-suit: Visual Regression Testing tool](https://github.com/reg-viz/reg-suit)
+
+- スクショを撮影しておく
+- 画像のdiffがあったものだけをまとめてレポートしてくれる
+
+<img src="/assets/circleci-artifacts/2019-06-23-23-59-21.png" width="100%" />
+
+---
+
+## ビジュアルリグレッションテスト
+
+- [ビジュアルリグレッションテストを導入して見た目の変化に気づける様にする - Misoca開発者ブログ](https://tech.misoca.jp/entry/2018/04/27/153000)
+- [Visual RegressionテストによるWebデザイン崩れの防止 - LCL Engineers' Blog](https://techblog.lclco.com/entry/2017/01/02/204804)
+- [FOLIOの画像回帰テストの裏側 – Yosuke Kurami – Medium](https://medium.com/@Quramy/folio%E3%81%AE%E7%94%BB%E5%83%8F%E5%9B%9E%E5%B8%B0%E3%83%86%E3%82%B9%E3%83%88%E3%81%AE%E8%A3%8F%E5%81%B4-c848030991bc)
+- [Storybookとreg-suitで気軽にはじめるVisual Regression Testing - wadackel.me](https://blog.wadackel.me/2018/storybook-chrome-screenshot-with-reg-viz/)
+
+---
+
+## How diff works
+
+- GCSかAWS S3にスナップショット（スクショ）を保存
+- 要求された元のスナップショットと、現在のスクショを比較
+
+GCS, S3の部分をArtifactsで代替できないだろうか
+
+---
+
+## reg-suitのプラグイン機構
+
+本題じゃないので詳しくはリポジトリを参照
+
+> &mdash; [reg-viz/reg-suit: Visual Regression Testing tool](https://github.com/reg-viz/reg-suit#plugins)
+
+---
+
+## Artifactsでsnapshotを保存
+
+- stepのプロセスで「特定ディレクトリをartifactsに保存」はできない
+- 利用者に`store_artifacts`を書いてもらわないといけない
+- パスがずれてるとバグる...
+
+Orbを使って隠蔽できないか
+
+---
+
+## Orb作ってstepを隠蔽
+
+```yaml
+orbs:
+  visual-regression: xxx/visual-regression@0.0.2
+jobs:
+  test:
+    steps:
+      # ...
+      - visual-regression/reg-suit:
+          base_branch: master
+          base_dir: packages/components
+          dest_dir: /tmp/reg-suit
+workflows:
+  version: 2.1
+  test_deploy:
+    jobs:
+      - test
+```
+
+---
+
+## Orbの作り方
+
+前回の資料がよかったのでそちらに委譲
+
+> &mdash; [Orbs開発の流れ ~はじめの一歩から、組織的にメンテしていくための環境構築まで / Flow of Orbs Development - Speaker Deck](https://speakerdeck.com/nulabinc/flow-of-orbs-development)
+
+
+---
+
+## :tada::tada::tada:
+
+<img src="/assets/circleci-artifacts/2019-06-24-01-34-41.png" width="100%" />
+<img src="/assets/circleci-artifacts/2019-06-24-01-32-02.png" width="100%" />
+
+---
+
+# Conclusion
+
+- CircleCI Artifacts + PRにコメントで省力化
+  - Storybook
+  - SPAアプリ
+- masterのArtifacsとPRの成果物を比較
+  - ビジュアルリグレッション
+  - テストカバレッジレポート etc
+- **素早く**、**気軽に**、**有益な**コードレビューをしたい
+
+---
+
+# Thanks
+
+- GitHub: Leko
+- Twitter: @L_e_k_o
+- Blog: https://blog.leko.jp
+- Other talks: https://talks.leko.jp
