@@ -1,0 +1,216 @@
+import { Head, Notes } from "mdx-deck";
+import { syntaxHighlighterPrism } from "mdx-deck/themes";
+import { Split, Horizontal } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+import { Script } from "./Script";
+import { Code } from "./Code";
+import { Bio } from "./Bio";
+import { FullWidth } from "./FullWidth";
+
+export { default as theme } from "./theme";
+export const themes = [syntaxHighlighterPrism]
+
+<Head>
+  <Meta
+    title="Node.jsとWeb APIのこれまで、現在、これから"
+    description="Node学園 34時限目 jsconf.eu 報告会"
+    slug="jsconf-eu-2019-nodejs-web-api"
+    publishedAt={new Date(2019, 5, 28)}
+  />
+  <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+</Head>
+
+# Node.jsとWeb APIのこれまで、現在、これから
+
+[Node学園 34時限目 jsconf.eu 報告会](https://nodejs.connpass.com/event/134646/)  
+Leko
+
+---
+
+## About me
+
+<Bio />
+
+I love TypeScript/JavaScript, Node.js, React
+処理系の中身読んだりAST解析で遊んだり
+
+---
+
+## Agenda
+
+JSConf EU 2019のトーク  
+[Joyee Cheung: Web APIs in Node.js Core: Past, Present, and Future](https://2019.jsconf.eu/joyee-cheung/web-apis-in-nodejs-core-past-present-and-future.html)  
+を10分に圧縮したまとめです。
+
+---
+
+export default Split
+
+<img src="/assets/jsconf-eu-2019-nodejs-web-api/2019-06-24-10-51-33.png" width="100%" />
+
+## トーク情報
+
+- Slide: [talks/web-api-in-node-core.pdf at master · joyeecheung/talks](https://github.com/joyeecheung/talks/blob/master/jsconfeu_201906/web-api-in-node-core.pdf)
+- Speaker + Transcript: [Joyee Cheung: Web APIs in Node.js Core: Past, Present, and Future](https://2019.jsconf.eu/joyee-cheung/web-apis-in-nodejs-core-past-present-and-future.html)
+
+---
+
+<img src="/assets/jsconf-eu-2019-nodejs-web-api/2019-06-26-01-20-54.png" width="100%" />
+
+> &mdash; [talks/web-api-in-node-core.pdf at master · joyeecheung/talks](https://github.com/joyeecheung/talks/blob/master/jsconfeu_201906/web-api-in-node-core.pdf)
+
+<Notes>
+- いくつかの組み込み関数が最初からあった
+- そのあとNodeが誕生。当時のWeb APIを実装
+- Node.jsの人気のため独自APIを拡充
+- なぜ独自？
+  - ブラウザと同じAPIを提供しても意味がない
+  - ex. EventEmitter / EventTarget
+</Notes>
+
+---
+
+export default Horizontal
+
+- `Node.js`
+- EventEmitter
+- Readable
+- querystring
+- crypto
+
+<!---->
+
+- `ECMA TC39`
+- Date, RegExp, Error
+- setTimeout
+- **URLSearchParams**
+
+<!---->
+
+- `Browsers`
+- EventTarget
+- ReadableStream
+- ~~URLSearchParams~~
+- SubtleCrypto
+
+---
+
+## 似てるけど異なるAPI
+
+ex. setTimeout
+
+- 異なるAPIをそれぞれ覚えて使い分ける？否
+- **Node.jsとWeb APIを近づける**
+  - 認知的負担を削減
+  - 初学者の戸惑いを減らす
+  - 学習用リソースの開発、維持が楽に
+
+---
+
+## WPT
+
+> &mdash; [web-platform-tests/wpt: Test suites for Web platform specs — including WHATWG, W3C, and others](https://github.com/web-platform-tests/wpt)
+
+- テスト状況は[test/wpt/status](https://github.com/nodejs/node/tree/master/test/wpt/status)から知れる
+
+---
+
+## Node.jsのWeb API
+
+- Stable
+  - WPTでカバー、globalに生えてる
+  - URL, URLSearchParams
+  - TextEncoder, TextDecoder
+- Experimental
+  - まだ組み込みモジュール（要require）
+  - WPTでカバーされてない
+  - Worker Threads
+  - Performance Timing API
+
+---
+
+## 議論中のWeb API
+
+- Stream: [nodejs/whatwg-stream](https://github.com/nodejs/whatwg-stream)
+- **Fetch**: [nodejs/node#27979](https://github.com/nodejs/node/pull/27979)
+
+<img src="/assets/jsconf-eu-2019-nodejs-web-api/2019-06-26-02-30-52.png" width="70%" />
+
+---
+
+## Web APIをどう維持していくか
+
+- Small core philosophy
+  - 基本機能のみを提供
+  - 独自APIの維持コスト削減
+  - **Web APIはなるべく入れてく**
+- 公式モジュール？コアで提供？
+  - パフォーマンス最適化しやすい
+  - 内部APIが必要な機能
+
+---
+
+## 実行コンテキストの差異
+
+<img src="/assets/jsconf-eu-2019-nodejs-web-api/2019-06-26-02-43-06.png" width="80%" />
+
+<Notes>
+- 例えばFetchはIFはあくまで氷山の一角に過ぎない
+- ただのHTTPクライアントのI/Fだと思ってはいけない
+- その裏側の仕様まで考慮する必要がある
+- 仕様通りにFetchを実装しようとしても、ほとんどの機能はNodeとセキュリティモデルが異なる
+- 例えばCORS
+- 技術的には可能だが、一部の機能だけを実装しガワだけ揃えても、
+- プラットフォーム互換を失い、混乱を招く
+</Notes>
+
+---
+
+## API互換性と根深さ
+
+ex. Stream
+
+- 度重なるバージョンアップ
+- さらなる新バージョン（Bob Stream）が策定中
+- 多くのAPIで内部的にStreamが使用されている
+- Node.jsの内部APIをWHATWG Streamに置き換えることは困難
+
+> &mdash; [Summit Topic: Bob Streams · Issue #172 · nodejs/summit](https://github.com/nodejs/summit/issues/172)  
+
+---
+
+<img src="/assets/jsconf-eu-2019-nodejs-web-api/2019-06-26-03-07-10.png" width="70%" />
+<img src="/assets/jsconf-eu-2019-nodejs-web-api/2019-06-26-03-07-30.png" width="70%" />
+
+<Notes>
+- PRまず出す
+- ここで多くの意義が唱えられ、場合によっては閉じられることもある
+  - cryptoとかね
+- 十分な興味関心、モチベが必要
+- masterにマージされてからもイテレーションする
+  - wptのテストを拡充してパスさせたりを繰り返す
+- 実験的なAPIとしてリリースすることもある
+  - WebWorkerとPerfTimingがそれ
+</Notes>
+
+---
+
+# Summary
+
+- NodeとWeb APIはゴールが違う
+- 多くのWeb APIが取り入れられた
+  - Stable: URL, Text{En,De}coder
+  - Experimental: Worker, Performance
+  - In discuss: Stream, Fetch
+- ワークフローを改善しより加速させていく
+
+---
+
+# Thanks
+
+- GitHub: Leko
+- Twitter: @L_e_k_o
+- Blog: https://blog.leko.jp
+- Other talks: https://talks.leko.jp

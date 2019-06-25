@@ -29,19 +29,12 @@ Leko
 
 ---
 
-## i18n
-
-- Talk slides are written in English (as far as possible)
-- Some screen shots include Japanese
-- I'll speak in Japanese
-
----
-
 ## About me
 
 <Bio />
 
-I love TypeScript, Node.js, React, React Native(Expo)  
+I love TypeScript/JavaScript, Node.js  
+React, React Native(Expo)  
 
 ---
 
@@ -51,51 +44,58 @@ Use [React SSR](https://reactjs.org/docs/react-dom-server.html) in Expo to gener
 
 ---
 
-## Server side rendering (SSR)
-
-- Reduce TTI([Time to Interactive](https://developers.google.com/web/tools/lighthouse/audits/time-to-interactive))
-- For OGP (`og:image`, `og:title` etc)
-- Crawler friendly ※
-
-> &mdash; [Google's web crawler Googlebot now runs on the latest version of Chromium: Why that's a good thing - Search Engine Land](https://searchengineland.com/google-will-ensure-googlebot-runs-the-latest-version-of-chromium-316534#targetText=Googlebot%20will%20now%20be%20%E2%80%9Cevergreen,Chromium%20rendering%20engine%20version%2074.)
-
----
-
-## How to use React SSR
-
-```jsx
-import React from 'react'
-import { renderToString } from 'react-dom/server'
-
-const App = () => (
-  <div>Hello, world!</div>
-)
-
-const html: string = renderToString(<App />)
-// => '<div data-reactroot="">Hello, world!</div>'
-console.log(html)
-```
-
-> &mdash; [ReactDOMServer – React](https://reactjs.org/docs/react-dom-server.html)
-
----
-
-## Expo
-
-- React Native（以下RN）で動作するツール/ライブラリ
-- 素のRNにはない便利なAPI/Componentが多数ある
-- ネイティブモジュールの面倒を見なくていい ※
-- 最近web対応が進んでいる
-
-※Managed workflowの場合
-
----
-
-## What is Expo side React SSR? :thinking_face:
+## What is "Expo side React SSR"? :thinking_face:
 
 <Notes>
 - 最近Expoがweb対応したから？
 - パフォーマンス改善？
+</Notes>
+
+---
+
+## "印刷もできる画面"を作る
+
+- CSS・JSで頑張る？
+- サーバでPDF生成して印刷？
+
+---
+
+## PDF generation with Node.js
+
+- [foliojs/pdfkit](https://github.com/foliojs/pdfkit)
+- [bpampuch/pdfmake](https://github.com/bpampuch/pdfmake)
+- [MrRio/jsPDF](https://github.com/MrRio/jsPDF)
+- [jjwilly16/node-pdftk](https://github.com/jjwilly16/node-pdftk)
+- X, Y座標でレイアウトを組む
+
+---
+
+## webの技術を使えないか？
+
+- HTML + CSS
+- デバッグ効率がとても上がる
+- 使い慣れた技術で作れるので楽で早い
+- **PDF生成において常識なのかタブーなのか不明**
+
+---
+
+## では結局どっち？
+
+技術的に可能ならwebでやりたい。  
+素振りしよう :muscle:
+
+---
+
+## お題
+
+- 帳票部分をまずWebで作る
+- ネイティブアプリへ転用できるかExpoで調査
+
+<Notes>
+- 前職：ECのバックヤードサービス。送り状や納品書などPDF作りまくってた
+- 現職：JavaScriptエンジニア（主にReact, RN）
+
+シナジーあるでこれ
 </Notes>
 
 ---
@@ -120,141 +120,240 @@ export default Split
 
 ---
 
-## アプリ作って解決しよう
+## 基本レイアウトとtable組む
 
-- 使ったその場でアプリに入力
-- 検査前に記入した結果を書式に沿ってPDF化
-- 印刷して提出
-- ~~:x: Spreadsheet/Excelでいいじゃん~~
-
-<Notes>
-- 前職：ECのバックヤードサービス。送り状や納品書などPDF作りまくってた
-- 現職：JavaScriptエンジニア（主にReact, RN）
-
-シナジーあるでこれ
-</Notes>
+<img src="/assets/expo-side-react-ssr/2019-06-25-10-03-25.png" width="100%" />
 
 ---
 
-## PDF generation in JavaScript
+## A4用紙のサイズで印刷する
+
+> &mdash; [size - CSS: Cascading Style Sheets | MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/@page/size)
+
+- A5, A4, A3, B5, B4, JIS-B5, JIS-B4, letter, legal, ledger
+
+```css
+@page {
+  size: A4 landscape;
+}
+```
 
 ---
 
-## PDF generation on AWS Lambda
+## ページを組む
+
+> &mdash; [cognitom/paper-css: Paper CSS for happy printing](https://github.com/cognitom/paper-css#basic-usage)
+
+```html
+<body class="A4 landscape">
+
+  <!-- Each sheet element should have the class "sheet" -->
+  <!-- "padding-**mm" is optional: you can set 10, 15, 20 or 25 -->
+  <section class="sheet padding-10mm">
+    ...
+  </section>
+
+</body>
+```
 
 ---
 
-## 開発体験よくない
+## 帳票はできた
 
-リロード遅い
-
----
-
-## webの技術を使えないか？
-
-- webpackとか
-- ReactとかCSSとか
-- PDF生成界隈において当たり前なのか、禁忌なのかわからない
+<video src="/assets/expo-side-react-ssr/web-pdf.webm#t=3" controls width="100%" muted autoPlay loop playsInline />
 
 ---
 
-## A4サイズにしたい
+## web帳票
 
-paper.css
+- Parcel/Webpackで普段通りの開発体験
+- 使い慣れたwebのノウハウを使いまわせる
+- 座標でレイアウトしなくていい
+  - テーブルレイアウト
+  - テキストの折り返し etc
+- **PDFの生成は印刷ダイアログ**
 
----
-
-## 帳票自体はできた
-
-TODO: ブラウザで帳票を開発してる様子が分かるスクショ
-
----
-
-## 仕組み
-
-- データを渡してrenderToString
-- html文字列をPrint APIに食わせる
-- 生成されたバイナリをShare APIに食わせる
+PDFの生成まで自動でいきたい
 
 ---
 
-## SSR部分のコード
+## Node.js side React SSR in Expo
 
-- hiroppyさんのSSR sample参考にさせてもらった
+- SSRをサーバサイドに実装
+- SSR用のエンドポイントを用意
+- そのURLをExpoのPrint APIに食わせPDFを生成
+- PDFのURIをShare APIに与える
 
----
-
-## Expoの中でSSRを動かす
-
-`react-dom/server`はUniversal
-ブラウザでも動くし、当然Expo（iOSならJavaScriptCore）でも動く
+サーバ用意せずに行けないかな
 
 ---
 
-## 悪魔合体
+## SWSRSSR
 
-React NativeのコードとReact DOMのコードが入り交じる様
+ServiceWorker side React SSR  
+「Node.js以外でSSR」する発想
+
+> &mdash; [SWSRSSR という1フレーム技 - mizchi's blog](https://mizchi.hatenablog.com/entry/2018/09/15/012910)
 
 ---
 
-## HTMLをPDFにできないか？
+## Expo side React SSR
 
-Print APIがExpoにあった
+- ~~SSRをサーバサイドに実装~~
+- ~~SSR用のエンドポイントを用意~~
+- ~~そのURLを~~**Expo内でrenderしたHTMLを**ExpoのPrint APIに食わせPDFを生成
+- PDFのURIをShare APIに与える
+
+---
+
+## How to use React SSR
+
+```jsx
+import React from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+
+const App = () => (
+  <div>Hello, world!</div>
+)
+
+const html: string = renderToStaticMarkup(<App />)
+// => '<div>Hello, world!</div>'
+console.log(html)
+```
+
+---
+
+## SSR with react-helmet
+
+> &mdash; [ssr-sample/renderFullPage.ts at master · hiroppy/ssr-sample](https://github.com/hiroppy/ssr-sample/blob/master/src/server/renderFullPage.ts)
+
+---
+
+```ts
+export function renderToString(jsx, Helmet) {
+  const body = renderToStringOrigin(jsx);
+  const helmet = Helmet.renderStatic();
+  return `
+    <!doctype html>
+    <html ${helmet.htmlAttributes.toString()}>
+      <head>
+        ${helmet.title.toString()}
+        ${helmet.meta.toString()}
+        ${helmet.link.toString()}
+      </head>
+      <body ${helmet.bodyAttributes.toString()}>
+        ${body}
+      </body>
+    </html>
+  `.trim();
+}
+```
+
+---
+
+```jsx
+import { Helmet } from "react-helmet";
+import { Report } from "../components/pages/Report";
+
+const props = { ... }
+const html = renderToString(
+  <>
+    <Helmet>
+      ...
+      <link rel="stylesheet" href="xxx/paper.min.css" />
+      <link rel="stylesheet" href="xxx/print.css" />
+      <title>...</title>
+    </Helmet>
+    <div className="sheet padding-20mm">
+      <Report {...props} />
+    </div>
+  </>,
+  Helmet
+);
+```
+
+---
+
+## ※Expoで動作します
+
+- react-dom/serverはUniversal
+- ブラウザでも動く
+- Expoでも動く
+- サーバ用意しなくてもいい
+
+
+---
+
+## HTML文字列をPDF化
+
+> &mdash; [Print - Expo Documentation](https://docs.expo.io/versions/latest/sdk/print/#printprinttofileasyncoptions)
+
+```ts
+import { Print } from 'expo'
+import paperSize from "paper-size";
+
+const [height, width] = paperSize.getSize("a4", {
+  unit: "pixel",
+  dpi: 144
+});
+const { uri } = await Print.printToFileAsync({
+  html,
+  width,
+  height
+});
+```
 
 ---
 
 ## 生成できたPDFにどうアクセスする？
 
-Share APIがExpoにあった  
-Webでも最近Web Share APIが出たね
+> &mdash; [Share · React Native](https://facebook.github.io/react-native/docs/share)
+
+```ts
+import { Share } from "react-native";
+
+await Share.share({ url });
+```
 
 ---
+
+export default Split
+
+<video src="/assets/expo-side-react-ssr/demo.mp4" controls width="50%" muted autoPlay loop playsInline />
 
 ## 動かした様子
 
-TODO: 動画
+1. Tap `印刷する`
+1. Expo side React SSR
+1. Generate PDF (Print API)
+1. Open share dialog
+1. ex. コンビニ印刷
 
 ---
 
-## 今年の検査で使ってみた
+## Expo side React SSR
 
-- 別紙にメモっておいた記録をアプリに入力し直し
-- PDFをコンビニでプリントして提出
-- 検査通った :tada::tada::tada:
-
-来年以降どうなるかは不明（明確なルールがないため人による）
-
----
-
-## 振り返って
-
-- デバッグ効率が半端なく上がる
-- 使い慣れた技術が使えるので素早く作れる
-- 印刷用のサイズ指定やレイアウトはpaper.cssに任せる
-- ブラウザでも似たようなことができそう？
-  - data URI + componentDidMount + window.print
+- 印刷ダイアログに頼らずPDF生成までいける
+- HTML+CSSでWeb帳票を作る
+- Expoの中でSSRしてHTMLを生成
+- PDF生成、印刷までExpoで完結できる
 
 ---
 
-## Expo side SSR & web帳票の可能性
+## Conclusion
 
-転用できる可能性はかなりある
-
-- 契約（クラウドサインとか）
-- 会計（freeeとか）
-- 行政手続き
-- その他特定書式のPDFや紙が必要な界隈
-
----
-
-# Conclusion
-
-- Expoだけで帳票のような複雑なPDFが生成できる
-- React+CSSで帳票が作れる幸せ。座標の管理しなくていい...!!
-- PDF生成のためのインフラ、リソースに気を使わなくてよい
+- Web帳票良さそう
+  - Webの開発体験を享受
+  - レイアウトが簡単、座標管理とおさらば
+  - background-colorが効かないなど課題はある
+- Node.js以外でもSSRできる
+- Expo単体で帳票（PDF）出力機能が作れた
 
 ---
 
 # Thanks
 
-@L_e_k_o
+- GitHub: Leko
+- Twitter: @L_e_k_o
+- Blog: https://blog.leko.jp
+- Other talks: https://talks.leko.jp
