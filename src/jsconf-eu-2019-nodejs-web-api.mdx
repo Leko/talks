@@ -33,8 +33,19 @@ Leko
 
 <Bio />
 
-I love TypeScript/JavaScript, Node.js, React
+I love TypeScript/JavaScript, Node.js, React  
 処理系の中身読んだりAST解析で遊んだり
+
+---
+
+<iframe
+  allowfullscreen
+  width="1120"
+  height="630"
+  src="https://www.youtube.com/embed/XePfzVs852s?start=884&end=887&mute=1" 
+  frameborder="0"
+  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+/>
 
 ---
 
@@ -42,7 +53,7 @@ I love TypeScript/JavaScript, Node.js, React
 
 JSConf EU 2019のトーク  
 [Joyee Cheung: Web APIs in Node.js Core: Past, Present, and Future](https://2019.jsconf.eu/joyee-cheung/web-apis-in-nodejs-core-past-present-and-future.html)  
-を10分に圧縮したまとめです。
+のまとめです。
 
 ---
 
@@ -62,79 +73,68 @@ export default Split
 > &mdash; [talks/web-api-in-node-core.pdf at master · joyeecheung/talks](https://github.com/joyeecheung/talks/blob/master/jsconfeu_201906/web-api-in-node-core.pdf)
 
 <Notes>
-- いくつかの組み込み関数が最初からあった
-- そのあとNodeが誕生。当時のWeb APIを実装
-- Node.jsの人気のため独自APIを拡充
-- なぜ独自？
-  - ブラウザと同じAPIを提供しても意味がない
-  - ex. EventEmitter / EventTarget
+- いくつかの組み込み関数が最初からあった<br/>
+- そのあとNodeが誕生。当時のWeb APIを実装<br/>
+- スライド切り替える<br/>
 </Notes>
 
 ---
 
-export default Horizontal
+<img src="/assets/jsconf-eu-2019-nodejs-web-api/2019-06-27-12-32-08.png" width="100%" />
 
-- `Node.js`
-- EventEmitter
-- Readable
-- querystring
-- crypto
+> &mdash; [talks/web-api-in-node-core.pdf at master · joyeecheung/talks](https://github.com/joyeecheung/talks/blob/master/jsconfeu_201906/web-api-in-node-core.pdf)
 
-<!---->
-
-- `ECMA TC39`
-- Date, RegExp, Error
-- setTimeout
-- **URLSearchParams**
-
-<!---->
-
-- `Browsers`
-- EventTarget
-- ReadableStream
-- ~~URLSearchParams~~
-- SubtleCrypto
+<Notes>
+- Node.jsの人気のため独自APIを拡充<br/>
+- なぜ独自？<br/>
+　- ブラウザと同じAPIを提供しても意味がない<br/>
+　- ex. EventEmitter / EventTarget<br/>
+- Web APIの一部だったURL, URLSearchParamsがNode.jsにも実装されました<br/>
+</Notes>
 
 ---
 
 ## 似てるけど異なるAPI
 
-ex. setTimeout
+ex. setTimeout, TextDecoder/StringDecoder
 
 - 異なるAPIをそれぞれ覚えて使い分ける？否
 - **Node.jsとWeb APIを近づける**
   - 認知的負担を削減
-  - 初学者の戸惑いを減らす
-  - 学習用リソースの開発、維持が楽に
+  - 学習用リソースが一元化される
+  - （特に初学者の）混乱を減らす
+
+<Notes>
+他にもurlやquerystring、processに生えてるタイミングメソッドたちもそう
+</Notes>
 
 ---
 
-## WPT
-
-> &mdash; [web-platform-tests/wpt: Test suites for Web platform specs — including WHATWG, W3C, and others](https://github.com/web-platform-tests/wpt)
-
-- テスト状況は[test/wpt/status](https://github.com/nodejs/node/tree/master/test/wpt/status)から知れる
-
----
-
-## Node.jsのWeb API
+## Node.jsのWeb API実装状況
 
 - Stable
-  - WPTでカバー、globalに生えてる
   - URL, URLSearchParams
   - TextEncoder, TextDecoder
 - Experimental
-  - まだ組み込みモジュール（要require）
-  - WPTでカバーされてない
   - Worker Threads
   - Performance Timing API
+
+> &mdash; [web-platform-tests/wpt: Test suites for Web platform specs — including WHATWG, W3C, and others](https://github.com/web-platform-tests/wpt)
+
+<Notes>
+StableはWPTでテストが書かれ、カバーされている<br/>
+つまりWebの仕様にきちんと則っていることをテストしながら開発<br/>
+安定したWeb APIはグローバルに生えており、ブラウザと同じように利用可能<br/>
+<br/>
+Experimentalなものはまだ組み込みモジュールとして提供されており、requireが必要
+</Notes>
 
 ---
 
 ## 議論中のWeb API
 
-- Stream: [nodejs/whatwg-stream](https://github.com/nodejs/whatwg-stream)
-- **Fetch**: [nodejs/node#27979](https://github.com/nodejs/node/pull/27979)
+- Streams API: [nodejs/whatwg-stream](https://github.com/nodejs/whatwg-stream), [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Streams_API)
+- **Fetch API**: [nodejs/node#27979](https://github.com/nodejs/node/pull/27979), [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
 
 <img src="/assets/jsconf-eu-2019-nodejs-web-api/2019-06-26-02-30-52.png" width="70%" />
 
@@ -157,13 +157,13 @@ ex. setTimeout
 <img src="/assets/jsconf-eu-2019-nodejs-web-api/2019-06-26-02-43-06.png" width="80%" />
 
 <Notes>
-- 例えばFetchはIFはあくまで氷山の一角に過ぎない
-- ただのHTTPクライアントのI/Fだと思ってはいけない
-- その裏側の仕様まで考慮する必要がある
-- 仕様通りにFetchを実装しようとしても、ほとんどの機能はNodeとセキュリティモデルが異なる
-- 例えばCORS
-- 技術的には可能だが、一部の機能だけを実装しガワだけ揃えても、
-- プラットフォーム互換を失い、混乱を招く
+- 例えばFetchはIFはあくまで氷山の一角に過ぎない<br/>
+- ただのHTTPクライアントのI/Fだと思ってはいけない<br/>
+- その裏側の仕様まで考慮する必要がある<br/>
+- 仕様通りにFetchを実装しようとしても、ほとんどの機能はNodeとセキュリティモデルが異なる<br/>
+- 例えばCORS<br/>
+- 技術的には可能だが、一部の機能だけを実装しガワだけ揃えても、<br/>
+- プラットフォーム互換を失い、混乱を招く<br/>
 </Notes>
 
 ---
@@ -185,25 +185,22 @@ ex. Stream
 <img src="/assets/jsconf-eu-2019-nodejs-web-api/2019-06-26-03-07-30.png" width="70%" />
 
 <Notes>
-- PRまず出す
-- ここで多くの意義が唱えられ、場合によっては閉じられることもある
-  - cryptoとかね
-- 十分な興味関心、モチベが必要
-- masterにマージされてからもイテレーションする
-  - wptのテストを拡充してパスさせたりを繰り返す
-- 実験的なAPIとしてリリースすることもある
-  - WebWorkerとPerfTimingがそれ
+- PRまず出す<br/>
+- ここで多くの意義が唱えられ、場合によっては閉じられることもある<br/>
+　- cryptoとかね<br/>
+- 十分な興味関心、モチベが必要<br/>
+- masterにマージされてからもイテレーションする<br/>
+　- wptのテストを拡充してパスさせたりを繰り返す<br/>
+- 実験的なAPIとしてリリースすることもある<br/>
+　- WebWorkerとPerfTimingがそれ<br/>
 </Notes>
 
 ---
 
 # Summary
 
-- NodeとWeb APIはゴールが違う
-- 多くのWeb APIが取り入れられた
-  - Stable: URL, Text{En,De}coder
-  - Experimental: Worker, Performance
-  - In discuss: Stream, Fetch
+- NodeとWeb APIはゴールが違かった
+- 多くのWeb APIが取り入れられている
 - ワークフローを改善しより加速させていく
 
 ---
