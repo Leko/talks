@@ -39,8 +39,9 @@ I love TypeScript, Node.js, React, React Native(Expo)
 
 ## Agenda
 
-- CirlceCIのArtifactsを軽く紹介
 - Artifactsを活用し、コードレビューを省力化、改善する
+
+具体例のためにいくつかのOSSを出しますが、それらの紹介ではなく**CircleCI artifactsを用いるアイデア・方法論の紹介**であることに注意されたし
 
 ---
 
@@ -71,7 +72,7 @@ jobs:
 
 ## Artifacts一覧を取得する
 
-今日の方々が主に何（言語）を書くかわからないのでcurlで
+> &mdash; [Artifacts Of A Build – CircleCI API Reference](https://circleci.com/docs/api/#artifacts-of-a-build)
 
 ```sh
 ENDPOINT='https://circleci.com/api/v1.1/project/:vcs-type/:username/:project'
@@ -84,13 +85,12 @@ curl "$ENDPOINT/:build_num/artifacts?circle-token=:token"
     "path" : "raw-test-output/go-test-report.xml",
     "pretty_path" : "raw-test-output/go-test-report.xml",
     "node_index" : 0,
-    "url" : "https://24-88881093-gh.circle-artifacts.com/0/raw-test-output/go-test-report.xml"
+    "url" : "https://xxx/raw-test-output/go-test-report.xml"
   },
   ...
 ]
 ```
 
-> &mdash; [Artifacts Of A Build – CircleCI API Reference](https://circleci.com/docs/api/#artifacts-of-a-build)
 
 ---
 
@@ -112,7 +112,7 @@ curl '{{artifactsのURL}}?circle-token=:token'
 
 - Storybook
   - コンポーネントカタログ、UIパーツ集
-  - 「このpropならこういう表示になる」を定義し簡単に再現
+  - 「このpropを与えたらこういう表示になる」を定義し再現
 - ステージング版アプリ
   - ReactをつかったSPA、Webpackでbundle
   - 自動テストやStorybookでカバーできない結合テスト（人力
@@ -157,9 +157,7 @@ stash事故、作業のキリが良くないと心理的ハードルが高い...
 
 ---
 
-## CircleCIのartifactsのアクセス制限
-
-※private repositoryの場合
+## Artifactsのアクセス制限
 
 - CircleCIにログインしている
 - リポジトリに対してRead権限があるとアクセス可能
@@ -171,7 +169,7 @@ S3等において**アクセス制限の二重管理しない**
 
 ## ArtifactsをPRにコメントするOSS
 
-オレオレシェルだったものをOSS化してくれたもの
+オレオレシェルだったものをOSS化してくれた
 
 > &mdash; [Naturalclar/klank: Tool to notify circleci artifact to pull requests and/or slack channel](https://github.com/Naturalclar/klank)
 
@@ -186,11 +184,11 @@ S3等において**アクセス制限の二重管理しない**
 export default Split
 
 <div>
-<h2>カバレッジの詳細</h2>
+<h2>カバレッジレポート</h2>
 
-これもPRにコメントできる、が
+これをPRにコメントできるが
 
-https://coverage.nodejs.org
+ex. https://coverage.nodejs.org
 </div>
 
 <img src="/assets/circleci-artifacts/2019-06-24-01-08-32.png" width="100%" />
@@ -204,7 +202,7 @@ https://coverage.nodejs.org
 - 今のmasterはいくつなんだっけ？
 - **このPRによってカバレッジ減ったのか増えたのか？**
 
-テストコード読めば分かるけど、人間じゃなくても分かる  
+テストコード読めばだいたい分かる、**でも人間じゃなくても分かる**  
 <small>※カバレッジだけが全てではないが、維持すべき重要な指標の１つ</small>
 
 ---
@@ -222,17 +220,17 @@ https://coverage.nodejs.org
 
 ## 例えばこんな感じ
 
-コメントの書式は[codecov](https://codecov.io)というサービスを真似た
+書式は[codecov](https://codecov.io)というサービスを真似
 
-<img src="/assets/circleci-artifacts/2019-06-19-21-51-36.png" />
+<img src="/assets/circleci-artifacts/2019-06-19-21-51-36.png" width="80%" />
 
 ---
 
 # coverage-diff-back
 
 - 作った
-- monorepoにも対応
-- JS向け。lcovのJSONなら他言語でも使えるかも
+- monorepoにも対応、JS向け
+- lcovのJSON吐ける言語なら使えるかも
 
 > &mdash; [Leko/coverage-diff-back: Send the coverage difference back to the github on each pull requests](https://github.com/Leko/coverage-diff-back)
 
@@ -245,11 +243,10 @@ https://coverage.nodejs.org
 
 ## storybookで目検する限界
 
-- 直接影響のあるところだけ動作確認するのは容易
+- 影響のある箇所だけ動作確認するのは容易
 - スタイル修正したときにデグレってないか影響範囲を目検...？
-  - コンポーネント数十個、更にストーリーが4-5個  
-  - 500パターン全部をPRのたびに全部チェック？
-- じゃあ確認しきるのを諦める？
+  - 数百パターンをPRのたびに全部チェック？
+- じゃあ確認するのを諦める？
 
 無理 :sob:
 
