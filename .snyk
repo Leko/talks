@@ -1,0 +1,68 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.13.5
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-450202:
+    - mdx-deck > @babel/preset-env > @babel/helper-module-imports > @babel/types > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - cheerio > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > @oclif/dev-cli > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > webpack-merge > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > inquirer > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > babel-plugin-styled-components > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > @babel/core > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > @babel/core > @babel/types > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > oclif > yeoman-environment > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > oclif > @oclif/plugin-not-found > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > @oclif/dev-cli > cli-ux > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > react-dev-utils > inquirer > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > styled-components > babel-plugin-styled-components > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > oclif > yeoman-generator > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > oclif > yeoman-environment > inquirer > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > oclif > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > oclif > yeoman-environment > grouped-queue > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > oclif > yeoman-generator > async > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > oclif > nps-utils > concurrently > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > babel-plugin-styled-components > @babel/helper-module-imports > @babel/types > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > oclif > @oclif/plugin-not-found > cli-ux > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > oclif > yeoman-generator > yeoman-environment > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > styled-components > @babel/helper-module-imports > @babel/types > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > @babel/preset-env > @babel/plugin-transform-async-to-generator > @babel/helper-remap-async-to-generator > @babel/types > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > oclif > yeoman-generator > yeoman-environment > grouped-queue > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > styled-components > babel-plugin-styled-components > @babel/helper-annotate-as-pure > @babel/types > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - scaffdog > oclif > yeoman-generator > yeoman-environment > inquirer > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > @babel/preset-env > @babel/plugin-transform-function-name > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > @babel/plugin-proposal-function-sent > @babel/helper-wrap-function > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
+    - mdx-deck > @babel/preset-env > @babel/plugin-transform-async-to-generator > @babel/helper-remap-async-to-generator > @babel/helper-wrap-function > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2019-07-04T05:34:41.805Z'
