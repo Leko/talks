@@ -1,0 +1,243 @@
+import { Head, Notes } from "mdx-deck";
+import { syntaxHighlighterPrism } from "mdx-deck/themes";
+import { Split, Horizontal } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+import { Script } from "./Script";
+import { Code } from "./Code";
+import { Bio } from "./Bio";
+import { FullWidth } from "./FullWidth";
+
+export { default as theme } from "./theme";
+export const themes = [syntaxHighlighterPrism]
+
+<Head>
+  <Meta
+    title="複数プロダクトで利用する共通ライブラリの戦略と運用経験"
+    description="Battle Conference Under30"
+    slug="bcu30-library-strategy"
+    publishedAt={new Date(2019, 5, 28)}
+  />
+  <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+</Head>
+
+# 複数プロダクトで利用する共通ライブラリの戦略と運用経験
+
+[Battle Conference Under30](https://bcu30.jp/2019/)  
+Leko
+
+---
+
+## About me
+
+<Bio />
+
+I love TypeScript, Node.js, React, React Native(Expo)  
+
+---
+
+<img src="/assets/bcu30-library-strategy/2019-07-05-23-24-19.png" width="100%" />
+
+## CureApp, Inc
+
+---
+
+## 最近のメディア掲載
+
+- [ニコチン依存症治療用アプリが治験で効果確認：日経メディカル](https://medical.nikkeibp.co.jp/leaf/mem/pub/hotnews/int/201905/561071.html)
+- [「新しい治療効果をアプリで生み出す」--キュア・アップ、総額22億円の資金調達 - CNET Japan](https://japan.cnet.com/article/35139508/)
+- [医師から「アプリを処方される」時代が来る？　ニコチン依存症治療用アプリ開発の裏側 | Forbes JAPAN（フォーブス ジャパン）](https://forbesjapan.com/articles/detail/27642)  
+
+---
+
+## 医療 / ヘルスケア
+
+<img src="/assets/bcu30-library-strategy/2019-07-05-23-38-11.png" width="18%" style={{margin: '0 1%'}} />
+<img src="/assets/bcu30-library-strategy/2019-07-05-23-38-17.png" width="18%" style={{margin: '0 1%'}} />
+<img src="/assets/bcu30-library-strategy/2019-07-05-23-38-23.png" width="18%" style={{margin: '0 1%'}} />
+<img src="/assets/bcu30-library-strategy/2019-07-05-23-38-27.png" width="18%" style={{margin: '0 1%'}} />
+<img src="/assets/bcu30-library-strategy/2019-07-05-23-38-36.png" width="18%" style={{margin: '0 1%'}} />
+
+---
+
+<img src="/assets/bcu30-library-strategy/2019-07-05-23-41-55.png" width="70%" />
+
+---
+
+<img src="/assets/bcu30-library-strategy/2019-07-05-23-40-53.png" width="80%" />
+
+---
+
+## インフラ
+
+<img src="/assets/bcu30-library-strategy/2019-07-05-23-18-17.png" width="100%" />
+
+---
+
+## 技術
+
+- JavaScript / TypeScript
+- React, React Native, Node.js, Redux, etc
+- CQRS + Event sourcing
+
+---
+
+## lib, util, common, shared
+
+## これ別のプロダクトで書いたな... :thinking_face:
+
+---
+
+- 共通の画面
+- 認証、認可
+- アセット管理
+- コンテンツ管理
+- 共通のUIパーツ
+- CIの設定の設定
+- ボイラープレート
+- 医学的な値のバリデーション
+- 通知の有無、タイミング・優先度制御
+- 利用規約、個人情報保護指針の同意チェック
+
+---
+
+## バグが少なく
+## 高品質なプロダクト開発を
+## 素早く遂行する
+
+---
+
+## この１年のnpm publish
+
+- 仕事: 473回
+- 個人OSS: 196回
+
+---
+
+## 1. 〜を作るために**先に**ライブラリを作っておく
+
+- 能書きだけで書くと使えないものになりやすい
+
+---
+
+## 2. **ドッグフーディング**しすぎて汎用性がない
+
+- PoCが作ってバグ取り済んだら早めに分離
+
+---
+
+## ボイラープレートは作らない
+
+- 維持コストの方が高い、ペイしない
+- 形骸化、ブラックボックス化
+- **ベストプラクティス集**くらいにしとく
+
+---
+
+## 3. アップデートで情報格差
+
+- Pushの情報共有は自動化
+- あとからPullできる情報整備
+- Release note書く
+
+---
+
+<img src="/assets/bcu30-library-strategy/2019-07-06-01-04-16.png" />
+<img src="/assets/bcu30-library-strategy/2019-07-06-01-02-27.png" />
+
+---
+
+## 4. １プロダクト都合でアップデート
+
+- スコープを明示
+- プラグイン機構を用意
+- ２プロダクト以上のエンジニアがレビュー
+- 破壊的変更はProposal PR/Issue作る
+
+---
+
+<img src="/assets/bcu30-library-strategy/2019-07-06-01-11-35.png" width="100%" />
+
+---
+
+## 5. 新規メンバーのキャッチアップが大変
+
+- 命名で妥協しない
+- **型**をちゃんと効かせる
+- **ドキュメントの作成・維持コスト**を加味
+
+---
+
+## 定期的にモブプロ・ペアプロ
+
+- 内部設計や**思想を共有**
+- 実プロダクトに投入をワイワイやる
+- 破壊的変更のマイグレーション
+- times警察 :cop:
+
+---
+
+## 登壇してフィードバックを得る
+
+- 機密を抜き汎用的な技術の話に変えて話す
+- 懇親会でフィードバックもらう、議論する
+
+---
+
+## Code and Learn
+
+<img src="/assets/bcu30-library-strategy/2019-07-06-01-27-11.png" width="100%" />
+
+---
+
+## プロダクトから離れて集中合宿
+
+<div style={{ display: 'flex' }}>
+<div style={{flex:1}}>
+<img src="/assets/bcu30-library-strategy/2019-07-06-01-18-43.png" width="100%" />
+</div>
+<div style={{flex:1}}>
+<img src="/assets/bcu30-library-strategy/2019-07-06-01-19-00.png" width="100%" />
+</div>
+</div>
+
+---
+
+## エンジニアの中でだけ「共通」
+
+- 共通（にしたい）UIパーツ
+- デザイナー、意思決定者も巻き込む
+
+---
+
+## 結果
+
+- 生産性上がるライブラリが何個かできた
+- 縦割りが薄らぎチーム間で助け合い
+- OSSに貢献するエンジニアが増えた
+
+---
+
+## まとめ
+
+- 作って得する**勝算**はあるか
+- コード書く以外の**フォロー**もする
+- **OSSをリスペクトし運用**する
+
+---
+
+## We are hiring
+
+<img src="/assets/bcu30-library-strategy/2019-07-05-17-09-12.png" width="80%" />
+
+[こだわり、考え抜くJavaScriptエンジニア集団に加わろう](https://www.wantedly.com/projects/211698)
+
+---
+
+# Thanks
+
+- GitHub: Leko
+- Twitter: @L_e_k_o
+- Blog: https://blog.leko.jp
+- Other talks: https://talks.leko.jp
