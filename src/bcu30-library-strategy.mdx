@@ -1,0 +1,166 @@
+import { Head, Notes } from "mdx-deck";
+import { syntaxHighlighterPrism } from "mdx-deck/themes";
+import { Split, Horizontal } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+import { Script } from "./Script";
+import { Code } from "./Code";
+import { Bio } from "./Bio";
+import { FullWidth } from "./FullWidth";
+
+export { default as theme } from "./theme";
+export const themes = [syntaxHighlighterPrism]
+
+<Head>
+  <Meta
+    title="複数プロダクトで利用する共通ライブラリの戦略と運用経験"
+    description="Battle Conference Under30"
+    slug="bcu30-library-strategy"
+    publishedAt={new Date(2019, 5, 28)}
+  />
+  <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+</Head>
+
+# 複数プロダクトで利用する共通ライブラリの戦略と運用経験
+
+[Battle Conference Under30](https://bcu30.jp/2019/)  
+Leko
+
+---
+
+## About me
+
+<Bio />
+
+I love TypeScript, Node.js, React, React Native(Expo)  
+
+---
+
+## CureApp, Inc
+
+---
+
+## メディア掲載
+
+---
+
+## 製品紹介
+
+---
+
+## アーキテクチャ
+
+- フルTS
+- CQRS
+
+---
+
+## プロダクト展開
+
+- 公になってるのは何個？広報チェックかな
+- あとはプロジェクト数だけ書く
+
+---
+
+# 社用ライブラリでの成功体験がある方 :raising_hand:
+
+---
+
+## 話すこと＋コンテキスト
+
+- 少数で複数のプロダクトを開発・運用するエンジニア組織
+- 試してみたこととその結果学んだこと
+
+---
+
+## OSS自作が好き
+
+---
+
+## それメンテできてますか？
+
+---
+
+## 使用F/W、ライブラリ（OSS）
+
+TODO: 
+
+何が足りないだろうか
+
+---
+
+## 試みた領域
+
+TODO: ちゃんと調査
+
+- サーバ
+  - express middleware (CQRS)
+- フロント（Web、アプリ）
+  - 共通UIカタログ
+  - 独自DSL
+- アプリ
+  - 共通UIカタログ
+  - 独自DSL
+  - 通知
+
+---
+
+## 得られたこと
+
+TODO: 
+
+---
+
+- 先にモノだけ作ってプロダクトにあとから入れるの失敗しやすい
+- ドッグフーディングを過信すると汎用性を欠く
+- 使い方ではなく思想の共有
+- モブプロで布教
+- モブプロでプロダクトに導入する様を見せる
+- リリースノートがなくてアップデート
+- レビュー体制（２プロダクト以上）
+- ownershipと情報・意識の格差
+- Proposal Issue
+- 破壊的変更を低コストにする
+- ドキュメント書く合宿
+- GitHub Issue
+- GitHub Release（npm hook）
+- times警察
+- UniversalなComponentは器用貧乏
+- 具体的なUIを持たないロジカルなコンポーネント
+- Code and Learn
+
+亡者の声
+
+- 嫌な予感がしたらとにかく叩き上げる
+- ダメそうなら早めに撤退
+- ドキュメント書かないとスケール不可能
+- OSSのようにやるとうまくいく（と思う）
+
+話さないこと
+
+- ライセンス（話しきれない、UNLICENCEDでいいのでは）
+
+---
+
+# Conclusion
+
+TODO: 
+
+---
+
+# We are hiring
+
+チーム紹介は[こちら](https://cureapp.co.jp/engineers.html)
+
+- [こだわり、考え抜くJavaScriptエンジニア集団に加わろう。 - Wantedly](https://www.wantedly.com/projects/211698)
+- [新しい医療を技術とハートで支えるセキュリティリーダー - Wantedly](https://www.wantedly.com/projects/293157)
+
+---
+
+# Thanks
+
+- GitHub: Leko
+- Twitter: @L_e_k_o
+- Blog: https://blog.leko.jp
+- Other talks: https://talks.leko.jp
