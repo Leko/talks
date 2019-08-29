@@ -1,0 +1,382 @@
+import { Head } from "mdx-deck";
+import { Split } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+export { default as theme } from "./theme";
+
+<Head>
+  <Meta
+    title="monorepoにおけるwebpackのaliasとrequire"
+    description="Build Battle Saga ~ Frontend ~"
+    slug="require-resolution-with-webpack-aliases"
+    publishedAt={new Date(2019, 7, 29)}
+  />
+  <link
+    href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css"
+    rel="stylesheet"
+  />
+</Head>
+
+# monorepoにおけるwebpackのaliasとrequire
+
+[Build Battle Saga ~ Frontend ~](https://battle-saga-jp.connpass.com/event/142700/)  
+Leko
+
+---
+
+## TL;DR
+
+Node.jsのrequireの挙動を理解していればビルドエラーにはならなかった
+
+---
+
+## requireの問題1
+
+```plain
+- node_modules/
+  - minimist/
+    - index.js
+    - ...
+- index.js <- ここ
+```
+
+で`require('minimist')`
+
+---
+
+## 当然requireできる
+
+```plain
+$ node index.js 
+[Function]
+```
+
+---
+
+## requireの問題2
+
+```plain
+- node_modules/
+  - minimist/
+    - index.js
+    - ...
+- packages/
+  - pkg-a/
+    - index.js <- ここ
+```
+
+で`require('minimist')`
+
+---
+
+## requireできる
+
+```plain
+$ cd packages/pkg-a
+$ node index.js 
+[Function]
+```
+
+---
+
+## requireの問題3
+
+```plain
+- packages/
+  - pkg-a/
+    - node_modules/
+      - minimist/
+        - index.js
+        - ...
+- index.js <- ここ
+```
+
+で`require('minimist')`
+
+---
+
+```plain
+$ node index.js
+internal/modules/cjs/loader.js:628
+    throw err;
+    ^
+
+Error: Cannot find module 'minimist'
+Require stack:
+- /home/leko/Downloads/work2/index.js
+    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:625:15)
+    at Function.Module._load (internal/modules/cjs/loader.js:527:27)
+    at Module.require (internal/modules/cjs/loader.js:683:19)
+    ...
+    at Function.Module.runMain (internal/modules/cjs/loader.js:839:10) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/home/leko/Downloads/work2/index.js' ]
+}
+```
+
+---
+
+## Webpack alias
+
+- React Native for webを混ぜる
+- React Nativeの書き方をReact DOMに変換するもの
+- RN開発でstorybookしたいときに便利
+
+（RN for webはあくまで題材、本筋とは関係ない）
+
+---
+
+## Webpack alias
+
+<img src="/assets/require-resolution-with-webpack-aliases/2019-08-29-16-15-58.png" />
+
+https://webpack.js.org/configuration/resolve/#resolvealias
+
+---
+
+## Getting started: RN for web
+
+webpack.config.js
+
+```js
+module.exports = {
+  resolve: {
+    alias: {
+      'react-native$': 'react-native-web'
+    }
+  }
+}
+```
+
+---
+
+## つまりこうなる
+
+```js
+import { View } from 'react-native'
+import { Rect } from 'react-native-svg'
+
+const { Text } = require('react-native')
+```
+
+↓ webpack index.js ↓
+
+```js
+import { View } from 'react-native-web' // 変わった
+import { Rect } from 'react-native-svg'
+
+const { Text } = require('react-native-web') // 変わった
+```
+
+---
+
+## :ok_woman: 簡単 :ok_woman:
+
+<img src="/assets/require-resolution-with-webpack-aliases/2019-08-29-16-18-20.png" width="100%" />
+
+---
+
+## やっと本題
+
+- monorepoでこれをやる
+- JSXが書かれたパッケージが兄弟にある
+
+---
+
+## monrepo? :baby:
+
+- 要は1つのリポジトリに沢山のnpmパッケージを作ること
+- BabelとかGatsbyとかいろんなOSSが採用してる構成
+- Lernaは「らーな」派
+
+---
+
+## こんなディレクトリ構成
+
+```plain
+- packages/
+    - pkg-storybook/ <- storybookはここで起動
+        - node_modules/
+            - react-native-web/
+            - pkg-components/
+    - pkg-components/
+        - RoundButton.jsx
+        - node_modules/
+            - react-native/
+```
+
+---
+
+## こんなstoryを書いてみる
+
+```js
+// pkg-storybook/src/RoundButton.stories.tsx
+import * as React from 'react'
+import { storiesOf } from '@storybook/react'
+import { RoundButton } from 'pkg-components'
+
+storiesOf('RoundButton', module)
+  .add('default', () => (
+    <RoundButton />
+  ))
+  .add('disabled', () => (
+    <RoundButton disabled />
+  ))
+```
+
+---
+
+## Module not found: Error: Can't resolve 'react-native'
+
+```plain
+...
+
+ERROR in ../pkg-components/RoundButton.jsx
+Module not found: Error: Can't resolve 'react-native' in '.../packages/pkg-components'
+ @ ../pkg-components/RoundButton.jsx 4:0-42 19:15-25
+ @ ../pkg-components/index.js
+ @ ./src/RoundButton.stories.jsx
+ @ ./src sync \.stories\.jsx?$
+ @ ./.storybook/config.js
+ @ multi ./node_modules/@storybook/core/dist/server/common/polyfills.js ...
+```
+
+---
+
+## なぜ
+
+構造を再掲
+
+```plain
+- packages/
+    - pkg-storybook/ <- storybookはここで起動
+        - node_modules/
+            - react-native-web/
+            - pkg-components/
+    - pkg-components/
+        - RoundButton.jsx <- ここでビルドエラー
+        - node_modules/
+            - react-native/
+```
+
+---
+
+```plain
+- packages/
+    - pkg-storybook/
+        - node_modules/
+            - react-native-web/
+            - pkg-components/
+            - hoge/
+              - index.js <- ここ
+    - pkg-components/
+        - ...
+        - node_modules/
+            - react-native/
+```
+
+で`require('react-native')`
+
+---
+
+## RNのrequireはできてる
+
+```plain
+$ cd packages/pkg-storybook/node_modules/hoge
+$ node index.js 
+internal/modules/cjs/loader.js:628
+    throw err;
+    ^
+
+Error: Cannot find module 'warnOnce'
+Require stack:
+- .../packages/pkg-storybook/node_modules/react-native/Libraries/react-native/...
+- .../packages/pkg-storybook/node_modules/hoge/index.js
+    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:625:15)
+    at Function.Module._load (internal/modules/cjs/loader.js:527:27)
+    at Module.require (internal/modules/cjs/loader.js:683:19)
+    ...
+```
+
+---
+
+## monorepoはシンボリックリンクになる
+
+```plain
+- packages/
+    - pkg-storybook/
+        - node_modules/
+            - react-native-web/
+            - pkg-components/ <- これが問題
+    - pkg-components/
+        - ...  <- 実質的にここからrequireしてるのと同じ
+        - node_modules/
+            - react-native/
+```
+
+---
+
+## いや動くはずでは？ :thinking_face:
+
+requireの問題1で動くと証明したはず（これ）
+
+```plain
+- node_modules/
+  - minimist/
+    - index.js
+    - ...
+- index.js <- ここで`require('minimist')`
+```
+
+---
+
+## エラーメッセージを信じすぎた
+
+- webpack aliasがrequireを変換
+  - react-native -> react-native-web
+- enhance-resolveが変換後を解決
+  - react-native-web
+- 解決に失敗
+  - requireの問題3を参照
+- throw 変換前のモジュールが見つからない
+  - **react-native**
+
+---
+
+## 絶対パスを指す
+
+```js
+module.exports = {
+  resolve: {
+    alias: {
+      'react-native$': require.resolve('react-native-web')
+    }
+  }
+}
+```
+
+- NG: ビルド時にモジュール名を解決する
+- OK: ビルド設定時に絶対パス指定
+
+---
+
+## できた
+
+<img src="/assets/require-resolution-with-webpack-aliases/2019-08-29-17-07-05.png" width="100%" />
+
+---
+
+大いなるビルドには大いなるハマりが伴う
+
+---
+
+# Thanks
+## Leko
+
+<img src="/assets/self_avatar.png" height="250" />
+<img src="/assets/self_bio.png" height="250" />
+<img src="/assets/self_contributions.png" height="250" />
+
+Node.js, React, React Native  
+deno本書いてます
