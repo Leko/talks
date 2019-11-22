@@ -1,0 +1,227 @@
+import { Head } from "mdx-deck";
+import { Split } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+export { default as theme } from "./theme";
+
+<Head>
+  <Meta
+    title="TSConf US 2019に行ってきました"
+    description="gotanda.ts #2"
+    slug="tsconfus2019"
+    publishedAt={new Date(2019, 10, 22)}
+  />
+  <link
+    href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css"
+    rel="stylesheet"
+  />
+</Head>
+
+# TSConf US 2019に行ってきました
+
+[gotanda.ts #2](https://gotanda-ts.connpass.com/event/155014/)  
+Leko
+
+---
+
+## Leko
+
+<img src="/assets/self_avatar.png" height="250" />
+<img src="/assets/self_bio.png" height="250" />
+<img src="/assets/self_contributions.png" height="250" />
+
+TypeScriptオタクです  
+
+---
+
+<img src="/assets/tsconfus2019/2019-11-22-17-07-41.png" width="100%" />
+
+---
+
+## TSConf US 2019
+
+- https://tsconf.io/
+- 場所：シアトル（アメリカ）
+- 開催：２回目([2018年サイト](https://tsconf.io/2018/index.html))
+- 主催：Dylan Schiemann([@dylans](https://twitter.com/dylans?lang=en))
+  - Sitepen CEO, Dojo作った人
+
+---
+
+## TSConf ***
+
+<img src="/assets/tsconfus2019/2019-11-22-17-10-39.png" width="80%" />
+
+---
+
+## 行った目的
+
+- TSConfブランドの想いをイベントを通じて体感したい
+- TSConf JPのゲストスピーカー交渉
+- Anders御大、Ryan Dahlのトークを生で聞きたかった
+- [オレオレTS playground](https://talks.leko.jp/advanced-typescript-playground/)を[@orta](https://twitter.com/orta?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor)に見せてフィードバックもらいたい
+- [@sasurau4](https://twitter.com/sasurau4?lang=en)が翻訳した[denobook 02](https://scrapbox.io/deno-ja/Denobook_02)をRyan Dahlに渡す
+- 職場（CureApp）から出張費出してもらえた
+
+---
+
+## TSConf US 2019
+
+<img src="/assets/tsconfus2019/2019-11-22-17-28-12.png" width="50%" />
+
+https://tsconf.io/schedule.html
+
+---
+
+## 特に印象に残ったトーク
+
+- Keynote
+- MakeCode Arcade with Static TypeScript
+- Testing Types: An Introduction to dtslint
+
+---
+
+## Keynote
+
+by Anders Hejlsberg
+
+- TypeScriptのこれまで、現在
+- TSを取り巻くコミュニティ
+- TSチームのチーム紹介、開発体制
+- 3.7で来る新機能等のアップデート紹介・ライブデモ
+- 今後のロードマップ
+- （WindowsでSurface使ってた）
+
+---
+
+## Error seems like Pyramid
+
+<img src="/assets/tsconfus2019/2019-11-22-17-49-39.png" width="48%" />
+&nbsp;
+<img src="/assets/tsconfus2019/2019-11-22-17-50-09.png" width="48%" />
+
+3.6 -> 3.7
+
+> &mdash; [Flatter Error Reporting - Announcing TypeScript 3.7 | TypeScript](https://devblogs.microsoft.com/typescript/announcing-typescript-3-7/#flatter-error-reporting)
+
+---
+
+## MakeCode Arcade with Static TypeScript
+
+by Tom Ball ([@tballmsft](https://twitter.com/tballmsft)) and Holly Mitchell
+
+- https://arcade.makecode.com/
+- GUIでプログラミング(Blocks)してゲーム作る教育サービス
+- BlocksとTypeScriptを相互変換、GUIに型アノテーションを活用
+- 画面上はCanvasで動作するエミュレータを実装
+- **Static TypeScript**でバイトコードにコンパイルして実デバイスで動く
+- 画面で作成したゲームをWeb USB経由で実デバイスへインストール
+
+---
+
+## Static TypeScript
+
+<img src="/assets/tsconfus2019/2019-11-22-17-58-54.png" width="50%" />
+
+> &mdash; [MakeCode Languages: Blocks, Static TypeScript and Static Python](https://makecode.com/language)
+
+> &mdash; [Microsoft、組み込みデバイスをターゲットとしたTypeScriptの高速サブセット”Static TypeScript”を発表](https://www.infoq.com/jp/news/2019/11/static-typescript-msft-paper/)
+
+
+---
+
+## Testing Types: An Introduction to dtslint
+
+by Dan Vanderkam ([@danvdk](https://twitter.com/danvdk?lang=en))
+
+- 型パズルで生まれた**型定義のテスト**ってどうしてる？
+- GenericsとConditional Typeで頑張って書く？
+- 書けなくはないけど、エラーが理解しづらくて辛くない？
+- 人間が読める型定義のテストを書くにはどうしたら良いか？そこで**dtslint**です
+- DefinitelyTypedでも型定義のテストに使われている
+
+---
+
+## dtslint
+
+- [microsoft/dtslint](https://github.com/microsoft/dtslint)
+
+```ts
+import { f } from "my-lib"; // f is(n: number) => void
+
+// $ExpectType void
+f(1);
+
+// Can also write the assertion on the same line.
+f(2); // $ExpectType void
+
+// $ExpectError
+f("one");
+```
+
+---
+
+## denobook 02を渡す
+
+> [@sasurau4](https://twitter.com/sasurau4?lang=en)が翻訳した[denobook 02](https://scrapbox.io/deno-ja/Denobook_02)をRyan Dahl, Kitson Kellyに渡す
+
+<img src="/assets/tsconfus2019/2019-11-22-18-23-34.png" height="60%" />
+&nbsp;
+<img src="/assets/tsconfus2019/2019-11-22-18-25-48.png" height="60%" />
+
+---
+
+## ゲスト交渉
+
+懇親会や休憩時間に挨拶と交渉
+
+- TSチーム: Anders, Orta, Ryan Cavanaugh, Daniel
+- Deno：Ryan Dahl, Kitson
+
+---
+
+## TSチームが日本に来ます！
+
+<img src="/assets/tsconfus2019/2019-11-22-18-30-09.png" width="50%" />
+<img src="/assets/tsconfus2019/2019-11-22-18-29-23.png" width="50%" />
+
+Ryan Cavanaugh, Daniel Rosenwasser
+
+---
+
+## （宣伝）
+
+- キーノートは[Ryan Cavanaugh](https://twitter.com/searyanc)氏
+- CFPの締切は**今月末（11/30）**です。ぜひご応募下さい！
+
+<img src="/assets/tsconfus2019/2019-11-22-17-26-06.png" width="60%" />
+
+---
+
+## 前日譚
+
+- Dylanとお茶してTSConf談義
+- 前夜祭的に開催された[Seattle TypeScript](https://www.meetup.com/seattle-ts/events/264757065/)へ誘われる
+  - TSConfとは別のご当地ミートアップ。トーク録画はこちら
+  - [How to Use TS Playground Effectively](https://www.youtube.com/watch?v=F2yKLkcYXxg)
+  - [Typescript at Google at Scale](https://www.youtube.com/watch?v=03IYU0LlwCE)
+  - [Fully Type Safe Web Workers with Zero Boilerplate](https://www.youtube.com/watch?v=sSkx5SVc2OA)
+  - [Upgrade to Typescript without Anyone Noticing](https://www.youtube.com/watch?v=5KkjpgaMSKg)
+
+---
+
+# めっちゃ有意義だった
+
+- 予定した目標は全部達成＋αの収穫があった
+- 行動目標を決めておくと、なんとなく"行ってきた"になりにくいと思う
+- OSSの作者がすぐ隣に居るの刺激的
+- 英語下手だけど、真摯に聞いてくれた。必要なのは勇気
+- **目標を持ち海外カンファレンスに行きたいエンジニアWanted**
+  - [こだわり、考え抜くJavaScriptエンジニア集団に加わろう。 - Web engineer jobs at 株式会社CureApp - Wantedly](https://www.wantedly.com/projects/211698)
+
+---
+
+# Thanks
+
+https://tsconf.jp
