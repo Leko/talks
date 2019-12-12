@@ -7,7 +7,9 @@
     "postinstall": "scripts/workaround-code-surfer",
     "build": "./scripts/build-decks",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "mdx-deck"
+    "start": "mdx-deck",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -33,6 +35,8 @@
   "dependencies": {
     "browserslist": "^4.6.6",
     "caniuse-lite": "^1.0.30000989",
-    "react-syntax-highlighter": "^9.0.1"
-  }
+    "react-syntax-highlighter": "^9.0.1",
+    "snyk": "^1.258.2"
+  },
+  "snyk": true
 }
