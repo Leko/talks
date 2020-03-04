@@ -1,0 +1,244 @@
+import { Head } from "mdx-deck";
+import { Split } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+export { default as theme } from "./theme";
+
+<Head>
+  <Meta
+    title="TypeScript v2 playground plugin"
+    description="TSCompilerAPI座談会"
+    slug="typescript-v2-playground-plugin"
+    publishedAt={new Date(2020, 2, 4)}
+  />
+  <link
+    href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css"
+    rel="stylesheet"
+  />
+</Head>
+
+# TypeScript v2 playground plugin
+
+[TSCompilerAPI座談会](https://gotanda-ts.connpass.com/event/155014/)  
+Leko
+
+---
+
+## Leko
+
+<img src="/assets/self_avatar.png" height="250" />
+<img src="/assets/self_bio.png" height="250" />
+<img src="/assets/self_contributions.png" height="250" />
+
+4月からシンガポールに住みます
+
+---
+
+## Innovator
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-03-16-15-40.png" height="600px" />
+
+> &mdash; [gql`quramy { name }` on Twitter: "#typescript My first playground plugin works :) https://t.co/8OHq0i07BX" / Twitter](https://twitter.com/Quramy/status/1224714244500918272)
+
+---
+
+## Context
+
+- TypeScript v2 docs is under development (suffix: `/v2/`)
+- New playground has plugin system :face_with_rolling_eyes:
+- It can load local plugin through localhost :exploding_head:
+
+---
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-04-13-03-13.png" width="100%" />
+
+---
+
+## Getting started
+
+Tutorial: [Link](https://www.typescriptlang.org/v2/dev/playground-plugins/)
+
+```sh
+yarn create typescript-playground-plugin xxx
+cd xxx
+yarn start
+```
+
+---
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-03-16-42-33.png" width="100%" />
+
+---
+
+## 作った
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-04-13-08-16.png" width="100%" />
+
+> &mdash; [Leko/ts-playground-plugin-stackoverflow](https://github.com/Leko/ts-playground-plugin-stackoverflow)
+
+---
+
+## 使えるよ
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-04-13-16-07.png" width="100%" />
+
+---
+
+## やってること
+
+- コードが変更されたら型チェックを実施
+- エラーメッセージをStackExchange APIで検索
+- 整形、出力
+
+---
+
+# 型チェック
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-04-13-32-53.png" />
+
+> &mdash; [gql`quramy { name }` on Twitter: "@L_e_k_o https://t.co/jMlDJJUhxM" / Twitter](https://twitter.com/Quramy/status/1234760134817021959)
+
+---
+
+## 型チェック（コード）
+
+```ts
+// ...
+modelChangedDebounce(sandbox, model) {
+  sandbox.getWorkerProcess().then((worker) =>
+    Promise.all([
+      worker.getSemanticDiagnostics(model.uri.toString()),
+      worker.getSyntacticDiagnostics(model.uri.toString()),
+    ])
+  )
+    .then(([semanticDiagnostics, syntacticDiagnostics]) =>
+      semanticDiagnostics.concat(syntacticDiagnostics)
+    )
+    .then(diagnostics => {
+      // ハンドリングする
+    })
+  // ...
+}
+```
+
+---
+
+# StackOverflowで類似検索
+
+本筋じゃないので[APIドキュメント](https://api.stackexchange.com/docs/advanced-search)と[私のコード](https://github.com/Leko/ts-playground-plugin-stackoverflow/blob/97d53315ccc45712b0af452f532a837cefc5d485/src/index.ts#L6-L17)参照
+
+---
+
+# 型エラー
+
+```plain
+1: const port = process.env.PORT;
+                ^^^^^^^
+error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i @types/node`.
+```
+
+こういうの
+
+---
+
+## エラーの整形
+
+```plain
+1: const port = process.env.PORT;
+                ^^^^^^^
+```
+
+↑Diagnosticsのstart, lengthからオレオレ生成
+
+```plain
+error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i @types/node`.
+```
+
+↑Compiler APIの一部を使用
+
+---
+
+## Diagnostic
+
+```ts
+    export interface DiagnosticRelatedInformation {
+        category: DiagnosticCategory;
+        code: number;
+        file: SourceFile | undefined;
+        start: number | undefined;
+        length: number | undefined;
+        messageText: string | DiagnosticMessageChain;
+    }
+    export interface Diagnostic extends DiagnosticRelatedInformation {
+        /** ... */
+        reportsUnnecessary?: {};
+        source?: string;
+        relatedInformation?: DiagnosticRelatedInformation[];
+    }
+```
+
+---
+
+## `messageText`といいつつstringではない
+
+```ts
+        messageText: string | DiagnosticMessageChain;
+```
+
+---
+
+## ts.formatDiagnositc
+
+```ts
+import type { FormatDiagnosticsHost } from 'typescript'
+
+const formatDiagnosticHost: FormatDiagnosticsHost = { /* ... */ }
+const errorMessage = ts.formatDiagnostic(d, formatDiagnosticHost)
+```
+
+---
+
+## FormatDiagnosticsHost
+
+```ts
+declare namespace ts {
+    // ...
+    export interface FormatDiagnosticsHost {
+        getCurrentDirectory(): string;
+        getCanonicalFileName(fileName: string): string;
+        getNewLine(): string;
+    }
+```
+
+---
+
+## 雑な実装例
+
+```ts
+const formatDiagnosticHost: FormatDiagnosticsHost = {
+  getCurrentDirectory() {
+    return ''
+  },
+  getCanonicalFileName(fileName: string) {
+    return fileName
+  },
+  getNewLine() {
+    return '\\n'
+  }
+}
+```
+
+---
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-04-13-08-16.png" width="100%" />
+
+---
+
+# Your toys, our sandbox
+
+https://www.typescriptlang.org/v2/dev/playground-plugins/
+
+---
+
+## 終わり
