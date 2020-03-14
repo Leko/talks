@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-patch node_modules/mdx-deck/lib/html.js << DIFF
+patch --forward node_modules/mdx-deck/lib/html.js << DIFF || true
 31c31
 <       whitelist: ['mdx-deck', 'mdx-deck/themes', 'mdx-deck/layouts'],
 ---
