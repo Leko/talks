@@ -1,0 +1,421 @@
+import { Head } from "mdx-deck";
+import { Split } from "mdx-deck/layouts";
+import { CodeSurfer } from "mdx-deck-code-surfer";
+import vsDarkPlus from "prism-react-renderer/themes/vsDarkPlus";
+import { Meta } from "./Meta";
+export { default as theme } from "./theme";
+
+<Head>
+  <Meta
+    title="TSerの遊び場：TS playground plugin"
+    description="UIT meetup vol.8 online「We Are TypeScripters!」"
+    slug="our-toys-your-sandbox"
+    publishedAt={new Date(2020, 2, 18)}
+  />
+  <link
+    href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css"
+    rel="stylesheet"
+  />
+</Head>
+
+# TSerの遊び場：TS playground plugin
+
+[UIT meetup vol.8 online「We Are TypeScripters!」](https://uit.connpass.com/event/161964/)  
+Leko
+
+---
+
+## Leko
+
+<img src="/assets/self_avatar.png" height="280" />
+<img src="/assets/our-toys-your-sandbox/2020-03-18-01-56-03.png" height="280" />
+<img src="/assets/our-toys-your-sandbox/2020-03-18-01-55-12.png" height="280" />
+
+JS/TSオタクです
+
+---
+
+## :tada: V2 :tada:
+
+2020/03/18時点では`/v2/`つけるとアクセスできそう
+
+<img src="/assets/type-boundary-on-typescript/2020-03-15-18-33-05.png" width="70%" />
+
+---
+
+<img src="/assets/our-toys-your-sandbox/2020-03-18-02-19-14.png" width="70%" />
+
+<img src="/assets/our-toys-your-sandbox/2020-03-18-02-20-32.png" width="70%" />
+
+---
+
+## :tada: 日本語 :tada:
+
+<img src="/assets/type-boundary-on-typescript/2020-03-15-18-38-10.png" width="70%" />
+
+> &mdash; [Japanese Translation Coordination Issue · Issue #220 · microsoft/TypeScript-Website](https://github.com/microsoft/TypeScript-Website/issues/220)  
+> &mdash; [Website Internationalization Roadmap · Issue #100 · microsoft/TypeScript-Website](https://github.com/microsoft/TypeScript-Website/issues/100)
+
+---
+
+## きっかけ
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-03-16-15-40.png" width="50%" />
+
+> &mdash; [gql`quramy { name }` on Twitter: "#typescript My first playground plugin works :) https://t.co/8OHq0i07BX" / Twitter](https://twitter.com/Quramy/status/1224714244500918272)
+
+---
+
+## Playground plugin? :thinking_face:
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-04-13-03-13.png" width="100%" />
+
+---
+
+## TypeScript playground plugin
+
+https://www.typescriptlang.org/v2/dev/playground-plugins/
+
+- TypeScript v2 docs is under development
+- New playground has plugin system :face_with_rolling_eyes:
+- It can load local plugin through localhost :exploding_head:
+
+---
+
+# TL;DR
+## TS playground pluginという遊び場がきでた。TSのメタを遊んで覚えて楽しもう
+
+---
+
+## 例えばこういうことができる
+
+- [.d.tsを解析して破壊的変更を検知する](https://talks.leko.jp/semver-detection-on-typescript/#0)
+- [OpenAPI定義からexpressのルーティング型を生成](https://speakerdeck.com/andoshin11/type-safe-everything)
+- [こちらCompilerAPI派出所any警察です👮‍♂️ - Qiita](https://qiita.com/Takepepe/items/3353159894ed57b6f0a8)
+- [TypeScript CompilerAPI によるVuexの参照型生成](https://speakerdeck.com/takefumiyoshii/typescript-compilerapi-niyoruvuexfalsecan-zhao-xing-sheng-cheng)
+- [Monaco Editor をハックする - Qiita](https://qiita.com/mizchi/items/5c5cb5abcb22d87f9031)
+- [型と命名（isXXX, hasXXX etc）の整合性をlintする](https://speakerdeck.com/takefumiyoshii/regular-expression-and-type-naming-rule-linter)
+- [Docコメントに動くテストを書く](https://akito0107.github.io/ts-compiler-api-slide/#slide=1)
+
+---
+
+## 試してみる
+
+- V2 playground開く
+- `Options`タブ開く
+- Custom npm Modulesに、  
+  `ts-playground-plugin-stackoverflow`と入力
+- リロード
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-04-13-16-07.png" width="70%" />
+
+---
+
+## 今回作ったもの
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-04-13-08-16.png" width="100%" />
+
+playgroundのエラーと類似のエラーをStackoverflowから探してサジェストするplaygroundプラグイン。  
+精度はご愛嬌... :pray:
+
+> &mdash; [Leko/ts-playground-plugin-stackoverflow](https://github.com/Leko/ts-playground-plugin-stackoverflow)
+
+---
+
+## やってること
+
+- コードが変更されたら型チェックを実施
+- エラーメッセージをStackExchange APIで検索
+- 整形、出力
+
+---
+
+## 必要知識
+
+- TypeScript playground plugin
+  - コア部分
+- TypeScript Compiler API/LanguageService
+  - 型チェックとかエラーの整形とか
+- Monaco editor
+  - エディタとpluginのやりとり
+- Stackexchange API
+  - Stackoverflowからエラーを検索する
+
+---
+
+## 話すこと、話さないこと
+
+- **TypeScript playground plugin** (サブ)
+  - プラグイン機構や使えるAPI、フックなど
+- **TypeScript Compiler API/LanguageService** (メイン)
+  - 型チェック、エラーの整形とか触りだけ
+- Monaco editor (割愛)
+  - [外部ライブラリもインストール・型解釈できるTypeScript playgroundを作った](https://talks.leko.jp/advanced-typescript-playground/#0)
+  - [Monaco Editor をハックする - Qiita](https://qiita.com/mizchi/items/5c5cb5abcb22d87f9031)
+- Stackexchange API (割愛)
+  - [APIドキュメント](https://api.stackexchange.com/docs/advanced-search)
+  - [API叩いてるコード](https://github.com/Leko/ts-playground-plugin-stackoverflow/blob/97d53315ccc45712b0af452f532a837cefc5d485/src/index.ts#L6-L17)
+
+---
+
+# Playground plugin
+
+プラグイン機構や使えるAPI、フックなど
+
+---
+
+## おおまかな開発の流れ
+
+1. テンプレからプロジェクト生成
+1. ローカル環境のセットアップ
+1. プラグイン書く
+1. npm publish
+1. playgroundに読み込ませて使う
+
+---
+
+## テンプレからプロジェクト生成
+
+https://www.typescriptlang.org/v2/dev/playground-plugins/
+
+```sh
+yarn create typescript-playground-plugin xxx
+cd xxx
+yarn start
+```
+
+このリポジトリもテンプレから作ってる:  
+[Leko/ts-playground-plugin-stackoverflow](https://github.com/Leko/ts-playground-plugin-stackoverflow)
+
+---
+
+## ローカル環境のセットアップ
+
+- 本番playgroundからlocalhsotのプラグインを読める  
+- ローカルにplayground cloneしなくていい
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-03-16-42-33.png" width="100%" />
+
+---
+
+## Overview
+
+```ts
+import type { PlaygroundPlugin, PluginUtils } from "./vendor/playground"
+
+export default (utils: PluginUtils): PlaygroundPlugin => {
+  return {
+    id: 'xxx',
+    displayName: 'タブの名前',
+
+    didMount(sandbox, container) {
+      // ...
+    },
+
+    modelChangedDebounce(sandbox, model) {
+      // ...
+    },
+  }
+}
+```
+
+---
+
+## pluginのフック
+
+- didMount
+  - Event: タブが選択され画面に表示された
+  - セットアップ、初期描画など
+- modelChanged(Debounce)
+  - Event: エディタのコードが変更された
+  - コードに対して**何か**して画面に表示する
+
+これ以外のフックは生成された`PlaygroundPlugin`の型定義を参照
+
+---
+
+# Compiler API / Language Service
+コードに対して何か（型チェック、エラーの整形）して画面に表示する
+
+---
+
+<CodeSurfer
+  title="型チェック"
+  notes="https://github.com/Leko/ts-playground-plugin-stackoverflow/blob/97d53315ccc45712b0af452f532a837cefc5d485/src/index.ts#L71-L86"
+  code={require('!raw-loader!assets/our-toys-your-sandbox/type-checking.ts')}
+  lang="typescript"
+  showNumbers={false}
+  theme={vsDarkPlus}
+  dark
+  steps={[
+    { lines: [1], notes: "コードが変更されたとき" },
+    { lines: [2], notes: "Monaco editorとTS Compiler APIをつなぐWebWorkerのプロセス" },
+    { tokens: { 4: [4,5,6,7,8,9,10], 5: [4,5,6,7,8,9,10] }, notes: "エディタ上に書かれたコードの仮想FSのURIを渡して" },
+    { tokens: { 4: [0,1,2,3,11], 5: [0,1,2,3,11] }, notes: "文脈上の型エラーと構文的な型エラーを取得（Promise<Array<Diagnostic>>）" },
+    { range: [8,10], notes: "Promise<Array<Diagnostic>>を１つにまとめる" },
+    { tokens: { 11: [4] }, notes: "diagnostics.length === 0 ならエラーなし" },
+  ]}
+/>
+
+---
+
+## Diagnostic
+
+```ts
+    export interface DiagnosticRelatedInformation {
+        category: DiagnosticCategory;
+        code: number;
+        file: SourceFile | undefined;
+
+        // コード上のエラー開始位置
+        start: number | undefined;
+
+        // エラーが起こっているコードの長さ
+        length: number | undefined;
+
+        // エラーメッセージ OR ネストしたエラー
+        messageText: string | DiagnosticMessageChain;
+    }
+    export interface Diagnostic extends DiagnosticRelatedInformation {
+        /** ... */
+        reportsUnnecessary?: {};
+        source?: string;
+        relatedInformation?: DiagnosticRelatedInformation[];
+    }
+```
+
+---
+
+## エラー内容の整形、表示
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-04-13-08-16.png" width="100%" />
+
+---
+
+## エラーの整形を分解
+
+```plain
+1: const port = process.env.PORT;
+                ^^^^^^^
+```
+
+↑start, lengthから該当行、エラー箇所を抽出（[コード](https://github.com/Leko/ts-playground-plugin-stackoverflow/blob/97d53315ccc45712b0af452f532a837cefc5d485/src/index.ts#L19-L27)）
+
+```plain
+error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try
+`npm i @types/node`.
+```
+
+↑Compiler APIの一部を使用
+
+---
+
+## `messageText`といいつつstringではない
+
+```ts
+        messageText: string | DiagnosticMessageChain;
+```
+
+---
+
+## ts.formatDiagnositc
+
+```ts
+import type { FormatDiagnosticsHost } from 'typescript'
+
+const formatDiagnosticHost: FormatDiagnosticsHost = { /* ... */ }
+const errorMessage = ts.formatDiagnostic(d, formatDiagnosticHost)
+```
+
+FormatDiagnosticsHost... :thinking_face:
+
+---
+
+## FormatDiagnosticsHost
+
+- `~Host`はTSをプラットフォーム非依存するためのDI
+- ブラウザやDenoなど任意の（仮想）FSに対し使える
+- 他にはCompilerHost, LanguageServiceHostなど
+
+```ts
+declare namespace ts {
+    // ...
+    export interface FormatDiagnosticsHost {
+        getCurrentDirectory(): string;
+        getCanonicalFileName(fileName: string): string;
+        getNewLine(): string;
+    }
+```
+
+---
+
+## 雑な実装例
+
+```ts
+const formatDiagnosticHost: FormatDiagnosticsHost = {
+  getCurrentDirectory() {
+    // playgroundにディレクトリの概念はないので型だけ合わせる
+    return ''
+  },
+  getCanonicalFileName(fileName: string) {
+    // ファイルパスのエスケープもないのでそのまま返す
+    return fileName
+  },
+  getNewLine() {
+    return '\\n'
+  }
+}
+```
+
+---
+
+## HTMLに整えて完成
+
+<img src="/assets/typescript-v2-playground-plugin/2020-03-04-13-08-16.png" width="100%" />
+
+---
+
+## アイデア次第、あなた次第。
+
+<img src="/assets/our-toys-your-sandbox/2020-03-18-12-16-32.png" width="100%" />
+
+> &mdash; [TypeScript Playground Plugin ideas · Issue #221 · microsoft/TypeScript-Website](https://github.com/microsoft/TypeScript-Website/issues/221)
+
+---
+
+# Playground pluginのすごいところ
+
+- TS本体に触れなくていい、3rd-partyプラグインとして作れる
+- アイデア次第で非常に強力
+- 他人に使ってもらいやすい
+- 開発しやすい
+
+---
+
+## FAQ
+
+- Q. 何をどうやって勉強したらいいですか
+  - A. [公式のwiki](https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API), [TypeScript Compiler Internals](https://basarat.gitbook.io/typescript/overview)読みつつひたすらデバッグ
+  - 先人が作ったもののコードリーディング
+
+- Q. 画面への反映ってどうしてますか
+  - A. 生DOM API叩いてます
+
+- Q. 生DOM触るのつらくないですか
+  - A. React等で書けるテンプレートも用意されてます
+  - React: [gojutin/typescript-playground-plugin-react](https://github.com/gojutin/typescript-playground-plugin-react#typescript-playground-plugin-react)
+  - Svelte: [gojutin/typescript-playground-plugin-svelte](https://github.com/gojutin/typescript-playground-plugin-svelte#typescript-playground-plugin-svelte)
+  - Angular, Vue版はまだない（**貢献チャンス**）
+
+---
+
+## 終わり
+
+- References
+  - [Playground plugin ドキュメント](https://www.typescriptlang.org/v2/dev/playground-plugins/)
+  - [今回作ったプラグインのリポジトリ](https://github.com/Leko/ts-playground-plugin-stackoverflow)
+- Related talks
+  - [TypeScript v2 playground plugin](https://talks.leko.jp/typescript-v2-playground-plugin/#0)
+  - ["型パズル"との付き合い方](https://talks.leko.jp/type-puzzle-world/#0)
+  - [外部ライブラリもインストール・型解釈できるTypeScript playgroundを作った](https://talks.leko.jp/advanced-typescript-playground/#0)
+  - [.d.tsを解析して破壊的変更を検知する](https://talks.leko.jp/semver-detection-on-typescript/#0)
