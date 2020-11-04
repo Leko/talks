@@ -75,6 +75,12 @@ const template = fs.readFileSync(
 );
 
 fs.writeFileSync(
+  path.join(__dirname, "..", "dist", "talks.json"),
+  JSON.stringify(slides),
+  "utf8"
+);
+
+fs.writeFileSync(
   path.join(__dirname, "..", "dist", "index.html"),
   template.replace("{%REPLACE_ME%}", slidesHTML.join("\n")),
   "utf8"
