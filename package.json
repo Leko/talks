@@ -31,7 +31,7 @@
     "scaffdog": "^0.2.0"
   },
   "dependencies": {
-    "browserslist": "^4.6.6",
+    "browserslist": "^4.16.5",
     "caniuse-lite": "^1.0.30000989",
     "react-syntax-highlighter": "^9.0.1"
   }
