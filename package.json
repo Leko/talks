@@ -23,7 +23,7 @@
     "cheerio": "^1.0.0-rc.2",
     "deindent": "^0.1.0",
     "koa-webpack": "^5.2.2",
-    "mdx-deck": "^1.10.0",
+    "mdx-deck": "^4.0.0",
     "mdx-deck-code-surfer": "^0.5.5",
     "prettier": "^1.14.3",
     "raw-loader": "^0.5.1",
