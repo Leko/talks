@@ -28,7 +28,7 @@
     "prettier": "^1.14.3",
     "raw-loader": "^0.5.1",
     "rimraf": "^2.6.2",
-    "scaffdog": "^0.2.0"
+    "scaffdog": "^1.0.0"
   },
   "dependencies": {
     "browserslist": "^4.6.6",
